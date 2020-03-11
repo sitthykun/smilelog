@@ -7,7 +7,7 @@ import time
 from typing import Any
 
 
-class Logger:
+class Consoler:
     """
 
     """
@@ -16,19 +16,14 @@ class Logger:
     # index of output
     id      = 0
 
-    def __init__(self, path: str, prefix: str, extension: str, formatFileName: str, enable: bool, color: bool = True):
+    def __init__(self, enable: bool, color: bool = True):
         """
 
         """
         # config
         self._enable            = enable
-        self._extension         = extension
-        self._formatFileName    = formatFileName
-        self._path              = path
-        self._prefix            = prefix
 
         #
-        self._filename          = self._getFileName()
         self._logId             = datetime.datetime.now().strftime('%H:%M:%S')
         # set color
         self._color             = color
@@ -48,66 +43,46 @@ class Logger:
         else:
             return ''
 
-    def _getFileName(self) -> str:
-        """
-
-        :return:
-        """
-        return self._path \
-               + self._prefix \
-               + time.strftime(self._formatFileName) \
-               + self._extension
-
-    def _write(self, typeName: str = '', title: str = '', content: dict = {}, color: str = '') -> None:
+    def _print(self, typeName: str = '', title: str = '', content: dict = {}, color: str = '') -> None:
         """
 
         :param typeName:
         :param title:
         :param content:
+        :param color:
         :return:
         """
-        # write log
+        # is enabled
         if bool(self._enable):
-            try:
-                # open log file, if not exist will create
-                f = open(self._filename, 'a+', encoding= 'utf-8')
-                # increase index first
-                Logger.id += 1
+            # increase index first
+            Consoler.id += 1
 
-                # do filter
-                if Logger.id not in Logger.hide:
-                    if self._color:
-                        # generate content format with color
-                        f.write(
-                            f"{self._logId} <id: {Logger.id}>"
-                            f"{color}>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>{self._style.ENDC}\n"
-                            f"[{typeName}] {self._style.TEXT_BOLD}{title}{self._style.ENDC} \n{self._dataFormat(content)} \n"
-                            f"{color}<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<{self._style.ENDC}\n\n\n"
-                        )
-                    else:
-                        # generate content format without color
-                        f.write(
-                            f"{self._logId} <id: {Logger.id}>"
-                            f">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n"
-                            f"[{typeName}] {self._style.TEXT_BOLD}{title}{self._style.ENDC} \n{self._dataFormat(content)} \n{self._logId} "
-                            f"<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\n\n\n"
-                        )
-
-                # close file
-                f.close()
-            except IOError as e:
-                print(f"IOError open file {e.errno} {e.strerror}({self._filename})")
-            except FileNotFoundError as e:
-                print(f"FileNotFoundError open file {e.errno} {e.strerror}({self._filename})")
-            except Exception as e:
-                print(f"Exception open file {e.errno} {e.strerror}({self._filename})")
+            # do filter
+            if Consoler.id not in Consoler.hide:
+                # check color too
+                if self._color:
+                    # generate content format with color
+                    print(
+                        f"{self._logId} <id: {Consoler.id}>"
+                        f"{color}>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>{self._style.ENDC}\n"
+                        f"[{typeName}] {self._style.TEXT_BOLD}{title}{self._style.ENDC} \n{self._dataFormat(content)} \n"
+                        f"{color}<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<{self._style.ENDC}\n\n\n"
+                    )
+                else:
+                    # generate content format without color
+                    print(
+                        f"{self._logId} <id: {Consoler.id}>"
+                        f">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n"
+                        f"[{typeName}] {self._style.TEXT_BOLD}{title}{self._style.ENDC} \n{self._dataFormat(content)} \n{self._logId} "
+                        f"<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\n\n\n"
+                    )
 
     def disable(self, numbers: list = []) -> None:
         """
 
         :return:
         """
-        Logger.hide     = numbers
+        Consoler.hide   = numbers
 
     def error(self, title: str = '', content: dict = {}) -> None:
         """
@@ -117,14 +92,14 @@ class Logger:
         :return:
         """
         if self._color:
-            self._write(
+            self._print(
                 f'{self._style.RED}ERROR{self._style.ENDC}'
                 , f'{self._style.RED}{title}{self._style.ENDC}'
                 , content
                 , self._style.RED
             )
         else:
-            self._write(
+            self._print(
                 'ERROR'
                 , title
                 , content
@@ -138,13 +113,13 @@ class Logger:
         :return:
         """
         if self._color:
-            self._write(f'{self._style.BLUE}INFO{self._style.ENDC}'
+            self._print(f'{self._style.BLUE}INFO{self._style.ENDC}'
                         , f'{self._style.BLUE}{title}{self._style.ENDC}'
                         , content
                         , self._style.BLUE
                         )
         else:
-            self._write('INFO'
+            self._print('INFO'
                         , title
                         , content
                         , self._style.BLUE
@@ -157,14 +132,14 @@ class Logger:
         :return:
         """
         if self._color:
-            self._write(
+            self._print(
                 f'{self._style.GREEN}SUCCESS{self._style.ENDC}'
                 , f'{self._style.GREEN}{title}{self._style.ENDC}'
                 , content
                 , self._style.GREEN
             )
         else:
-            self._write(
+            self._print(
                 'INFO'
                 , title
                 , content
@@ -178,9 +153,9 @@ class Logger:
         :return:
         """
         if self._color:
-            self._write('TRACK', title, content)
+            self._print('TRACK', title, content)
         else:
-            self._write('TRACK', title, content)
+            self._print('TRACK', title, content)
 
     def warning(self, title: str = '', content: dict = {}) -> None:
         """
@@ -189,14 +164,14 @@ class Logger:
         :return:
         """
         if self._color:
-            self._write(
+            self._print(
                 f'{self._style.YELLOW}WARNING{self._style.ENDC}'
                 , f'{self._style.YELLOW}{title}{self._style.ENDC}'
                 , content
                 , self._style.YELLOW
             )
         else:
-            self._write(
+            self._print(
                 'WARNING'
                 , title
                 , content
