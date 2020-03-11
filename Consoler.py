@@ -3,7 +3,6 @@ Author: masakokh
 Version: 1.0.0
 """
 import datetime
-import time
 from typing import Any
 
 

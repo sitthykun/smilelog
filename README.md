@@ -1,3 +1,4 @@
 # pylogger
-1. colorise python3.x logger
-2. disable log and console via public its id.
+1. colorise output
+2. disable log and console via public its id
+3. split each output with a big span
