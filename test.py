@@ -35,3 +35,5 @@ if __name__ == '__main__':
     console2.warning('Warning', {'data': 'my content'})
     # 9
     console2.success('Success', {'data': 'my content'})
+    # 10
+    console2.success('Success', 'Hello String')
