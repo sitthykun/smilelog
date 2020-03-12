@@ -16,24 +16,15 @@ if __name__ == '__main__':
     )
 
     # first object
-    # 1
-    console1.info('information', {'data':'my content'})
+    # 1 value as dict
+    console1.info('information', {'data':'my information'})
     # 2
-    console1.warning('Warning', {'data': 'my content'})
+    console1.warning('Warning', {'data': 'my warning message'})
     # 3
-    console1.success('Success', {'data': 'my content'})
-    # second object
+    console1.success('Success Title', {'data': 'it works'})
     # 4
-    console2.info('information', {'data':'my content'})
-    # 5
-    console2.warning('Warning', {'data': 'my content'})
-    # 6
-    console2.success('Success', {'data': 'my content'})
-    # 7
-    console2.info('information', {'data':'my content'})
-    # 8
-    console2.warning('Warning', {'data': 'my content'})
-    # 9
-    console2.success('Success', {'data': 'my content'})
-    # 10
+    console2.error('My Error Title', {'data':'dangerous process'})
+    # 5 with string
+    console2.track('Track my code', 'Called me')
+    # 6 with string
     console2.success('Success', 'Hello String')

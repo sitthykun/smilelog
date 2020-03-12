@@ -127,7 +127,6 @@ log.disable([1,2,3])
 # it shows all except 3, 6, 7
 console.disable([3, 6, 7, 89])
 ```
-.
 
 ### Output
 It's gonna show like this:
