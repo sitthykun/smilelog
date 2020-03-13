@@ -1,4 +1,4 @@
-# pylog
+# SmartLog
 
 It's gonna change the tranditional tracking in another way.\
 What will it assist us.
