@@ -1,7 +1,7 @@
 # SmileLog
 
 It's gonna change the traditional tracking in another way.\
-What will it assist us.
+What will it assist us:
  
 1. Colorise output
 2. Be able to stop any output via its public id
@@ -9,6 +9,13 @@ What will it assist us.
 4. Generate a new dynamic log filename
 5. Disable the entire tracking in a second
 6. 5 methods for 5 outputs
+
+It is available on **PyPi** store via https://pypi.org/project/SmileLog/
+#### Installation
+```
+# pip3 install SmileLog
+```
+
 
 ### 5 Methods
 Use in different situation, and show up in different color
