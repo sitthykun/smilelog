@@ -1,17 +1,17 @@
 # SmileLog
 
-It's gonna change the tranditional tracking in another way.\
+It's gonna change the traditional tracking in another way.\
 What will it assist us.
  
 1. Colorise output
 2. Be able to stop any output via its public id
-3. Split each output with a big span
+3. Split each output with a big span and symbols
 4. Generate a new dynamic log filename
 5. Disable the entire tracking in a second
 6. 5 methods for 5 outputs
 
 ### 5 Methods
-Use in different situation, and show up different color too
+Use in different situation, and show up in different color
 1. track: track(title, content)
 2. information: info(title, content)
 3. success: success(title, content)
