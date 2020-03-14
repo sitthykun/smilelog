@@ -1,13 +1,13 @@
 # SmileLog
 
-It's gonna change the traditional tracking in another way.\
+It's gonna change the traditional tracing in another way.\
 What will it assist us:
  
 1. Colorise output
 2. Be able to stop any output via its public id
 3. Split each output with a big span and symbols
 4. Generate a new dynamic log filename
-5. Disable the entire tracking in a second
+5. Disable the entire tracing in a second
 6. 5 methods for 5 outputs
 
 It is available on **PyPi** store via https://pypi.org/project/SmileLog/
@@ -32,23 +32,23 @@ Use in different situation, and show up in different color
 #### Start using in the simple way:
 
 ```
-from pylog import Logger, Consoler
+from smilelog import Logger, Consoler
 
 
 # first instant
 console	= Consoler(
-		enable= True
-		)
+            enable= True
+	)
 
 # try to print out
 console.info(
-		'My Info Title'
-		, {'data':'My Dictionary Content'}
-		)
+	'My Info Title'
+	, {'data':'My Dictionary Content'}
+	)
 
 # success method
 console.success(
-		'My Success Title'
+	'My Success Title'
         , 'My String'
         )
 ```
@@ -56,7 +56,7 @@ console.success(
 ### Logger Vs. Consoler
 
 ##### 1. Logger:
-Logger is a tracking class library and write/output into a file.\
+Logger is a tracing class library and write/output into a file.\
 This will need generating a file and keep writing the content.
 Let's Look at its configure would explain more:
 
@@ -123,12 +123,14 @@ enable= True
 ```
 
 ##### 2. Consoler
-Consolder is a tracking class library and show in terminal as just in time.
+Consoler is a tracing class library and show in terminal as just in time.
 The class is simpler that Logger by just needing a couple parameters and no storage requirement.
 
 As the first sample above:
 ```
-
+console	= Consoler(
+        enable= True
+		)
 ```
 
 ### Disable print out
