@@ -1,4 +1,5 @@
 # SmileLog
+![smilelog](https://user-images.githubusercontent.com/227092/76993446-6e44ff00-697f-11ea-9aed-970b8fa0e126.png)
 
 It's gonna change the traditional tracing in another way.\
 What will it assist us:
@@ -28,6 +29,7 @@ Use in different situation, and show up in different color
 - title is a string
 - content can be a string or dict
 ```
+![smilelog-output](https://user-images.githubusercontent.com/227092/76993665-c845c480-697f-11ea-862d-8622cca09f14.png)
 
 #### Start using in the simple way:
 
@@ -179,6 +181,5 @@ Hello String
 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 ```
-
 ##### My unique slogan is:
 a little developer in the big world \o/
