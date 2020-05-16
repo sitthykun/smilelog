@@ -38,26 +38,24 @@ from smilelog import Logger, Consoler
 
 
 # first instant
-console	= Consoler(
+log	= Logger(
             enable= True
 	)
 
 # try to print out
-console.info(
+log.info(
 	'My Info Title'
 	, {'data':'My Dictionary Content'}
 	)
 
 # success method
-console.success(
+log.success(
 	'My Success Title'
         , 'My String'
         )
 ```
 
-### Logger Vs. Consoler
-
-##### 1. Logger:
+### Logger
 Logger is a tracing class library and write/output into a file.\
 This will need generating a file and keep writing the content.
 Let's Look at its configure would explain more:
@@ -124,17 +122,6 @@ color= False
 enable= True
 ```
 
-##### 2. Consoler
-Consoler is a tracing class library and show in terminal as just in time.
-The class is simpler that Logger by just needing a couple parameters and no storage requirement.
-
-As the first sample above:
-```
-console	= Consoler(
-        enable= True
-		)
-```
-
 ### Disable print out
 The most feature developer guy needs.\
 It will disable only the index that we set in the disable list.
@@ -143,32 +130,31 @@ console and log object are not related each other.
 
 ```
 # Logger instant
-# it shows all except 1,2,3
-log.disable([1,2,3])
+# Ex: Logger logged 10 times
+# but we will show some id except 1,2,3,7,8,9
+# do this
+log.disable([1,2,3,7,8,9])
 
-# Consolder instant
-# it shows all except 3, 6, 7
-console.disable([3, 6, 7, 89])
 ```
 
 ### Output
 It's gonna show like this:
 ```
-02:48:29 <id: 6>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+02:48:29 <id: 4>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 [SUCCESS] Success 
 {'data': 'my content'} 
 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
 
-02:48:29 <id: 8>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+02:48:29 <id: 5>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 [WARNING] Warning 
 {'data': 'my content'} 
 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
 
-02:48:29 <id: 9>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+02:48:29 <id: 6>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 [SUCCESS] Success 
 {'data': 'my content'} 
 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
