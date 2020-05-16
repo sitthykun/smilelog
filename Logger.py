@@ -1,6 +1,6 @@
 """
 Author: masakokh
-Version: 1.0.0
+Version: 1.1.0
 """
 import datetime
 import time
@@ -28,14 +28,14 @@ class Logger:
         self.__prefix           = prefix
 
         #
-        self.__filename         = self._getFileName()
+        self.__filename         = self.__getFileName()
         self.__logId            = datetime.datetime.now().strftime('%H:%M:%S')
         # set color
         self.__color            = color
         # inner class
         self.__style            = self.StyleModifier()
 
-    def _dataFormat(self, content: Any) -> Any:
+    def __dataFormat(self, content: Any) -> Any:
         """
 
         :param _data:
@@ -48,7 +48,7 @@ class Logger:
         else:
             return ''
 
-    def _getFileName(self) -> str:
+    def __getFileName(self) -> str:
         """
 
         :return:
@@ -58,7 +58,7 @@ class Logger:
                + time.strftime(self.__formatFileName) \
                + self.__extension
 
-    def _write(self, typeName: str = '', title: str = '', content: dict = {}, color: str = '') -> None:
+    def __write(self, typeName: str = '', title: str = '', content: dict = {}, color: str = '') -> None:
         """
 
         :param typeName:
@@ -81,7 +81,7 @@ class Logger:
                         f.write(
                             f"{self.__logId} <id: {Logger.id}>"
                             f"{color}>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>{self.__style.ENDC}\n"
-                            f"[{typeName}] {self.__style.TEXT_BOLD}{title}{self.__style.ENDC} \n{self._dataFormat(content)} \n"
+                            f"[{typeName}] {self.__style.TEXT_BOLD}{title}{self.__style.ENDC} \n{self.__dataFormat(content)} \n"
                             f"{color}<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<{self.__style.ENDC}\n\n\n"
                         )
 
@@ -89,7 +89,7 @@ class Logger:
                         print(
                             f"{self.__logId} <id: {Logger.id}>"
                             f"{color}>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>{self.__style.ENDC}\n"
-                            f"[{typeName}] {self.__style.TEXT_BOLD}{title}{self.__style.ENDC} \n{self._dataFormat(content)} \n"
+                            f"[{typeName}] {self.__style.TEXT_BOLD}{title}{self.__style.ENDC} \n{self.__dataFormat(content)} \n"
                             f"{color}<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<{self.__style.ENDC}\n\n\n"
                         )
                     else:
@@ -97,7 +97,7 @@ class Logger:
                         f.write(
                             f"{self.__logId} <id: {Logger.id}>"
                             f">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n"
-                            f"[{typeName}] {self.__style.TEXT_BOLD}{title}{self.__style.ENDC} \n{self._dataFormat(content)} \n{self.__logId} "
+                            f"[{typeName}] {self.__style.TEXT_BOLD}{title}{self.__style.ENDC} \n{self.__dataFormat(content)} \n{self.__logId} "
                             f"<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\n\n\n"
                         )
 
@@ -105,7 +105,7 @@ class Logger:
                         f.write(
                             f"{self.__logId} <id: {Logger.id}>"
                             f">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n"
-                            f"[{typeName}] {self.__style.TEXT_BOLD}{title}{self.__style.ENDC} \n{self._dataFormat(content)} \n{self.__logId} "
+                            f"[{typeName}] {self.__style.TEXT_BOLD}{title}{self.__style.ENDC} \n{self.__dataFormat(content)} \n{self.__logId} "
                             f"<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\n\n\n"
                         )
 
@@ -133,14 +133,14 @@ class Logger:
         :return:
         """
         if self.__color:
-            self._write(
+            self.__write(
                 f'{self.__style.RED}ERROR{self.__style.ENDC}'
                 , f'{self.__style.RED}{title}{self.__style.ENDC}'
                 , content
                 , self.__style.RED
             )
         else:
-            self._write(
+            self.__write(
                 'ERROR'
                 , title
                 , content
@@ -154,13 +154,13 @@ class Logger:
         :return:
         """
         if self.__color:
-            self._write(f'{self.__style.BLUE}INFO{self.__style.ENDC}'
+            self.__write(f'{self.__style.BLUE}INFO{self.__style.ENDC}'
                         , f'{self.__style.BLUE}{title}{self.__style.ENDC}'
                         , content
                         , self.__style.BLUE
                         )
         else:
-            self._write('INFO'
+            self.__write('INFO'
                         , title
                         , content
                         , self.__style.BLUE
@@ -173,14 +173,14 @@ class Logger:
         :return:
         """
         if self.__color:
-            self._write(
+            self.__write(
                 f'{self.__style.GREEN}SUCCESS{self.__style.ENDC}'
                 , f'{self.__style.GREEN}{title}{self.__style.ENDC}'
                 , content
                 , self.__style.GREEN
             )
         else:
-            self._write(
+            self.__write(
                 'INFO'
                 , title
                 , content
@@ -194,9 +194,9 @@ class Logger:
         :return:
         """
         if self.__color:
-            self._write('TRACK', title, content)
+            self.__write('TRACK', title, content)
         else:
-            self._write('TRACK', title, content)
+            self.__write('TRACK', title, content)
 
     def warning(self, title: str = '', content: dict = {}) -> None:
         """
@@ -205,14 +205,14 @@ class Logger:
         :return:
         """
         if self.__color:
-            self._write(
+            self.__write(
                 f'{self.__style.YELLOW}WARNING{self.__style.ENDC}'
                 , f'{self.__style.YELLOW}{title}{self.__style.ENDC}'
                 , content
                 , self.__style.YELLOW
             )
         else:
-            self._write(
+            self.__write(
                 'WARNING'
                 , title
                 , content
