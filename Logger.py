@@ -16,12 +16,13 @@ class Logger:
     # index of output
     id      = 0
 
-    def __init__(self, path: str, prefix: str, extension: str, formatFileName: str, enable: bool, color: bool = True):
+    def __init__(self, path: str, prefix: str, extension: str, formatFileName: str, enableLog: bool= True, enableConsole: bool= True,  color: bool = True):
         """
 
         """
         # config
-        self.__enable           = enable
+        self.__enableLog        = enableLog
+        self.__enableConsole    = enableConsole
         self.__extension        = extension
         self.__formatFileName   = formatFileName
         self.__path             = path
@@ -67,7 +68,7 @@ class Logger:
         :return:
         """
         # write log
-        if bool(self.__enable):
+        if bool(self.__enableLog):
             try:
                 # open log file, if not exist will create
                 f = open(self.__filename, 'a+', encoding= 'utf-8')
@@ -85,22 +86,7 @@ class Logger:
                             f"{color}<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<{self.__style.ENDC}\n\n\n"
                         )
 
-                        # generate content format with color
-                        print(
-                            f"{self.__logId} <id: {Logger.id}>"
-                            f"{color}>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>{self.__style.ENDC}\n"
-                            f"[{typeName}] {self.__style.TEXT_BOLD}{title}{self.__style.ENDC} \n{self.__dataFormat(content)} \n"
-                            f"{color}<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<{self.__style.ENDC}\n\n\n"
-                        )
                     else:
-                        # generate content format without color
-                        f.write(
-                            f"{self.__logId} <id: {Logger.id}>"
-                            f">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n"
-                            f"[{typeName}] {self.__style.TEXT_BOLD}{title}{self.__style.ENDC} \n{self.__dataFormat(content)} \n{self.__logId} "
-                            f"<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\n\n\n"
-                        )
-
                         # generate content format without color
                         f.write(
                             f"{self.__logId} <id: {Logger.id}>"
@@ -111,12 +97,40 @@ class Logger:
 
                 # close file
                 f.close()
+
             except IOError as e:
                 print(f"IOError open file {e.errno} {e.strerror}({self.__filename})")
             except FileNotFoundError as e:
                 print(f"FileNotFoundError open file {e.errno} {e.strerror}({self.__filename})")
             except Exception as e:
                 print(f"Exception open file {e.errno} {e.strerror}({self.__filename})")
+
+            # block redundancy
+            # print out
+            if bool(self.__enableConsole):
+                try:
+                    # do filter
+                    if Logger.id not in Logger.hide:
+                        if self.__color:
+                            # generate content format with color
+                            print(
+                                f"{self.__logId} <id: {Logger.id}>"
+                                f"{color}>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>{self.__style.ENDC}\n"
+                                f"[{typeName}] {self.__style.TEXT_BOLD}{title}{self.__style.ENDC} \n{self.__dataFormat(content)} \n"
+                                f"{color}<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<{self.__style.ENDC}\n\n\n"
+                            )
+
+                        else:
+                            # generate content format without color
+                            print(
+                                f"{self.__logId} <id: {Logger.id}>"
+                                f">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n"
+                                f"[{typeName}] {self.__style.TEXT_BOLD}{title}{self.__style.ENDC} \n{self.__dataFormat(content)} \n{self.__logId} "
+                                f"<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\n\n\n"
+                            )
+
+                except Exception as e:
+                    print(f"Exception open file {e.errno} {e.strerror}({self.__filename})")
 
     def disable(self, numbers: list = []) -> None:
         """
@@ -139,6 +153,7 @@ class Logger:
                 , content
                 , self.__style.RED
             )
+
         else:
             self.__write(
                 'ERROR'
@@ -159,6 +174,7 @@ class Logger:
                         , content
                         , self.__style.BLUE
                         )
+
         else:
             self.__write('INFO'
                         , title
@@ -179,6 +195,7 @@ class Logger:
                 , content
                 , self.__style.GREEN
             )
+
         else:
             self.__write(
                 'INFO'
@@ -211,6 +228,7 @@ class Logger:
                 , content
                 , self.__style.YELLOW
             )
+
         else:
             self.__write(
                 'WARNING'
