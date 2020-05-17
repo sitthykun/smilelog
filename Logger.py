@@ -16,7 +16,7 @@ class Logger:
     # index of output
     id      = 0
 
-    def __init__(self, path: str, prefix: str, extension: str, formatFileName: str, enableLog: bool= True, enableConsole: bool= True,  color: bool = True):
+    def __init__(self, path: str, prefix: str, extension: str, formatFileName: str, enableLog: bool= True, enableConsole: bool= True, color: bool = True):
         """
 
         """

@@ -66,7 +66,8 @@ log	= Logger(
             prefix: str, 
             extension: str, 
             formatFileName: str, 
-            enable: bool, 
+            enableLog: bool= True,
+            enableConsole: bool= True,
             color: bool = True
 	)
 ```
