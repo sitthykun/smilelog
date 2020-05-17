@@ -119,8 +119,10 @@ color= False
 	- False: To disable the logging
 ```
 # set enable
-# make all above working
-enable= True
+# enable to write log file
+enableLog= True
+# enable to print out
+enableConsole= True
 ```
 
 ### Disable print out
