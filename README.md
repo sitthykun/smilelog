@@ -11,7 +11,9 @@ What will it assist us:
 5. Disable the entire tracing in a second
 6. 5 methods for 5 outputs
 
-It is available on **PyPi** store via https://pypi.org/project/SmileLog/
+It is available on **PyPi** store via https://pypi.org/project/SmileLog/ \
+To Support my work, please donate me via <style>.bmc-button img{height: 34px !important;width: 35px !important;margin-bottom: 1px !important;box-shadow: none !important;border: none !important;vertical-align: middle !important;}.bmc-button{padding: 7px 15px 7px 10px !important;line-height: 35px !important;height:51px !important;text-decoration: none !important;display:inline-flex !important;color:#ffffff !important;background-color:#79D6B5 !important;border-radius: 5px !important;border: 1px solid transparent !important;padding: 7px 15px 7px 10px !important;font-size: 22px !important;letter-spacing: 0.6px !important;box-shadow: 0px 1px 2px rgba(190, 190, 190, 0.5) !important;-webkit-box-shadow: 0px 1px 2px 2px rgba(190, 190, 190, 0.5) !important;margin: 0 auto !important;font-family:'Cookie', cursive !important;-webkit-box-sizing: border-box !important;box-sizing: border-box !important;}.bmc-button:hover, .bmc-button:active, .bmc-button:focus {-webkit-box-shadow: 0px 1px 2px 2px rgba(190, 190, 190, 0.5) !important;text-decoration: none !important;box-shadow: 0px 1px 2px 2px rgba(190, 190, 190, 0.5) !important;opacity: 0.85 !important;color:#ffffff !important;}</style><link href="https://fonts.googleapis.com/css?family=Cookie" rel="stylesheet"><a class="bmc-button" target="_blank" href="https://www.buymeacoffee.com/sitthykun"><img src="https://cdn.buymeacoffee.com/buttons/bmc-new-btn-logo.svg" alt="Buy me a Pizza"><span style="margin-left:5px;font-size:28px !important;">Buy me a Pizza</span></a>
+ 
 #### Installation
 ```
 # pip3 install SmileLog
@@ -20,11 +22,11 @@ It is available on **PyPi** store via https://pypi.org/project/SmileLog/
 
 ### 5 Methods
 Use in different situation, and show up in different color
-1. track: track(title, content)
-2. information: info(title, content)
-3. success: success(title, content)
-4. warning: warning(title, content)
-5. error: error(title, content)
+1. track: track(title, content, id= None)
+2. information: info(title, content, id= None)
+3. success: success(title, content, id= None)
+4. warning: warning(title, content, id= None)
+5. error: error(title, content, id= None)
 ```
 - title is a string
 - content can be a string or dict
