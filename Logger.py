@@ -1,6 +1,6 @@
 """
 Author: masakokh
-Version: 1.1.0
+Version: 1.2.0
 """
 import datetime
 import time
@@ -34,12 +34,19 @@ class Logger:
         # set color
         self.__color            = color
         # inner class
-        self.__style            = self.StyleModifier()
+        self.__style            = self.__StyleModifier()
+
+    def __backupFileName(self) -> str:
+        """
+
+        """
+        # create a new file
+        return ''
 
     def __dataFormat(self, content: Any) -> Any:
         """
 
-        :param _data:
+        :param content:
         :return:
         """
         if isinstance(content, dict):
@@ -59,21 +66,35 @@ class Logger:
                + time.strftime(self.__formatFileName) \
                + self.__extension
 
-    def __write(self, typeName: str = '', title: str = '', content: dict = {}, color: str = '') -> None:
+    def __setNewId(self, id: int) -> None:
+        """
+        :param content:
+        :return:
+        """
+        if id > Logger.id:
+            Logger.id   = id
+
+    def __write(self, typeName: str = '', title: str = '', content: dict = {}, color: str = '', logId: int= None) -> None:
         """
 
         :param typeName:
         :param title:
         :param content:
+        :param LogId:
         :return:
         """
+        # Reset log id
+        if logId:
+            self.__setNewId(logId)
+
         # write log
         if bool(self.__enableLog):
             try:
                 # open log file, if not exist will create
                 f = open(self.__filename, 'a+', encoding= 'utf-8')
                 # increase index first
-                Logger.id += 1
+                if logId is None:
+                    Logger.id += 1
 
                 # do filter
                 if Logger.id not in Logger.hide:
@@ -139,7 +160,7 @@ class Logger:
         """
         Logger.hide     = numbers
 
-    def error(self, title: str = '', content: dict = {}) -> None:
+    def error(self, title: str = '', content: dict = {}, id: int= None) -> None:
         """
 
         :param title:
@@ -148,10 +169,11 @@ class Logger:
         """
         if self.__color:
             self.__write(
-                f'{self.__style.RED}ERROR{self.__style.ENDC}'
-                , f'{self.__style.RED}{title}{self.__style.ENDC}'
-                , content
-                , self.__style.RED
+                typeName= f'{self.__style.RED}ERROR{self.__style.ENDC}'
+                , title= f'{self.__style.RED}{title}{self.__style.ENDC}'
+                , content= content
+                , color= self.__style.RED
+                , logId= id
             )
 
         else:
@@ -160,29 +182,10 @@ class Logger:
                 , title
                 , content
                 , self.__style.RED
+                , logId=id
             )
 
-    def info(self, title: str = '', content: dict = {}) -> None:
-        """
-        :param title:
-        :param content:
-        :return:
-        """
-        if self.__color:
-            self.__write(f'{self.__style.BLUE}INFO{self.__style.ENDC}'
-                        , f'{self.__style.BLUE}{title}{self.__style.ENDC}'
-                        , content
-                        , self.__style.BLUE
-                        )
-
-        else:
-            self.__write('INFO'
-                        , title
-                        , content
-                        , self.__style.BLUE
-                        )
-
-    def success(self, title: str = '', content: dict = {}) -> None:
+    def info(self, title: str = '', content: dict = {}, id: int= None) -> None:
         """
         :param title:
         :param content:
@@ -190,32 +193,23 @@ class Logger:
         """
         if self.__color:
             self.__write(
-                f'{self.__style.GREEN}SUCCESS{self.__style.ENDC}'
-                , f'{self.__style.GREEN}{title}{self.__style.ENDC}'
-                , content
-                , self.__style.GREEN
+                typeName= f'{self.__style.BLUE}INFO{self.__style.ENDC}'
+                , title= f'{self.__style.BLUE}{title}{self.__style.ENDC}'
+                , content= content
+                , color= self.__style.BLUE
+                , logId= id
             )
 
         else:
             self.__write(
-                'INFO'
-                , title
-                , content
-                , self.__style.GREEN
+                typeName= 'INFO'
+                , title= title
+                , content= content
+                , color= self.__style.BLUE
+                , logId= id
             )
 
-    def track(self, title: str = '', content: dict = {}) -> None:
-        """
-        :param title:
-        :param content:
-        :return:
-        """
-        if self.__color:
-            self.__write('TRACK', title, content)
-        else:
-            self.__write('TRACK', title, content)
-
-    def warning(self, title: str = '', content: dict = {}) -> None:
+    def success(self, title: str = '', content: dict = {}, id: int= None) -> None:
         """
         :param title:
         :param content:
@@ -223,27 +217,74 @@ class Logger:
         """
         if self.__color:
             self.__write(
-                f'{self.__style.YELLOW}WARNING{self.__style.ENDC}'
-                , f'{self.__style.YELLOW}{title}{self.__style.ENDC}'
-                , content
-                , self.__style.YELLOW
+                typeName= f'{self.__style.GREEN}SUCCESS{self.__style.ENDC}'
+                , title= f'{self.__style.GREEN}{title}{self.__style.ENDC}'
+                , content= content
+                , color= self.__style.GREEN
+                , logId= id
             )
 
         else:
             self.__write(
-                'WARNING'
-                , title
-                , content
-                , self.__style.YELLOW
+                typeName= 'INFO'
+                , title= title
+                , content= content
+                , color= self.__style.GREEN
+                , logId= id
             )
 
-    class StyleModifier:
-        BLUE = '\033[94m'
-        GREEN = '\033[92m'
-        RED = '\033[91m'
-        YELLOW = '\033[93m'
+    def track(self, title: str = '', content: dict = {}, id: int= None) -> None:
+        """
+        :param title:
+        :param content:
+        :return:
+        """
+        if self.__color:
+            self.__write(
+                typeName= 'TRACK'
+                , title= title
+                , content= content
+                , logId= id
+            )
+        else:
+            self.__write(
+                typeName= 'TRACK'
+                , title= title
+                , content= content
+                , logId= id
+            )
 
-        TEXT_BOLD = '\033[1m'
-        TEXT_UNDERLINE = '\033[4m'
+    def warning(self, title: str = '', content: dict = {}, id: int= None) -> None:
+        """
+        :param title:
+        :param content:
+        :return:
+        """
+        if self.__color:
+            self.__write(
+                typeName= f'{self.__style.YELLOW}WARNING{self.__style.ENDC}'
+                , title= f'{self.__style.YELLOW}{title}{self.__style.ENDC}'
+                , content= content
+                , color= self.__style.YELLOW
+                , logId= id
+            )
 
-        ENDC = '\033[0m'
+        else:
+            self.__write(
+                typeName= 'WARNING'
+                , title= title
+                , content= content
+                , color= self.__style.YELLOW
+                , logId= id
+            )
+
+    class __StyleModifier:
+        BLUE        = '\033[94m'
+        GREEN           = '\033[92m'
+        RED             = '\033[91m'
+        YELLOW          = '\033[93m'
+
+        TEXT_BOLD       = '\033[1m'
+        TEXT_UNDERLINE  = '\033[4m'
+
+        ENDC            = '\033[0m'
