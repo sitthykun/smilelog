@@ -80,20 +80,21 @@ class Logger:
         :param typeName:
         :param title:
         :param content:
-        :param LogId:
+        :param logId:
         :return:
         """
-        # Reset log id
-        if logId:
-            self.__setNewId(logId)
-
         # write log
         if bool(self.__enableLog):
             try:
                 # open log file, if not exist will create
                 f = open(self.__filename, 'a+', encoding= 'utf-8')
-                # increase index first
-                if logId is None:
+
+                # validate log Id
+                if logId:
+                    # Reset log id
+                    self.__setNewId(logId)
+                else:
+                    # increase index first
                     Logger.id += 1
 
                 # do filter
@@ -165,6 +166,7 @@ class Logger:
 
         :param title:
         :param content:
+        :param id:
         :return:
         """
         if self.__color:
@@ -189,6 +191,7 @@ class Logger:
         """
         :param title:
         :param content:
+        :param id:
         :return:
         """
         if self.__color:
@@ -213,6 +216,7 @@ class Logger:
         """
         :param title:
         :param content:
+        :param id:
         :return:
         """
         if self.__color:
@@ -237,6 +241,7 @@ class Logger:
         """
         :param title:
         :param content:
+        :param id:
         :return:
         """
         if self.__color:
@@ -258,6 +263,7 @@ class Logger:
         """
         :param title:
         :param content:
+        :param id:
         :return:
         """
         if self.__color:
@@ -279,7 +285,7 @@ class Logger:
             )
 
     class __StyleModifier:
-        BLUE        = '\033[94m'
+        BLUE            = '\033[94m'
         GREEN           = '\033[92m'
         RED             = '\033[91m'
         YELLOW          = '\033[93m'
