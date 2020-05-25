@@ -1,9 +1,9 @@
 """
 Author: masakokh
-Version: 1.2.0
+Version: 2.0.0
 """
-import datetime
-import time
+import datetime, os, os.path
+from datetime import datetime, timedelta
 from typing import Any
 
 
@@ -16,23 +16,26 @@ class Logger:
     # index of output
     id      = 0
 
-    def __init__(self, path: str, prefix: str, extension: str, formatFileName: str, enableLog: bool= True, enableConsole: bool= True, color: bool = True):
+    def __init__(self, path: str, name: str, extension: str, formatFileName: str, enableLog: bool= True, enableConsole: bool= True, color: bool = True):
         """
 
         """
+        # set color
+        self.__color            = color
         # config
         self.__enableLog        = enableLog
         self.__enableConsole    = enableConsole
         self.__extension        = extension
+        # 2020-05-18
         self.__formatFileName   = formatFileName
+        # path + /
         self.__path             = path
-        self.__prefix           = prefix
+        self.__name             = name
 
-        #
+        # compute
         self.__filename         = self.__getFileName()
-        self.__logId            = datetime.datetime.now().strftime('%H:%M:%S')
-        # set color
-        self.__color            = color
+        self.__logId            = datetime.now().strftime('%H:%M:%S')
+        self.__prefixBackupFile = self.__name + '-'
         # inner class
         self.__style            = self.__StyleModifier()
 
@@ -41,7 +44,10 @@ class Logger:
 
         """
         # create a new file
-        return ''
+        return self.__path \
+                + self.__prefixBackupFile \
+                + datetime.strftime(datetime.now() - timedelta(1), self.__formatFileName) \
+                + self.__extension
 
     def __dataFormat(self, content: Any) -> Any:
         """
@@ -56,25 +62,49 @@ class Logger:
         else:
             return ''
 
+    def __createNewBackupFile(self) -> None:
+        """
+
+        """
+        # yesterday
+        yesterdayFileName       = self.__backupFileName()
+
+        # check yesterday file with len of current file
+        if not os.path.exists(yesterdayFileName) and len(self.__getContentFile(self.__getFileName())) > 0:
+            # rename current file to backup file
+            # that will move content too
+            os.rename(self.__getFileName(), yesterdayFileName)
+
+    def __getContentFile(self, fileName: str) -> str:
+        """
+
+        :param fileName:
+        :return:
+        """
+        try:
+            with open(fileName) as f:
+                return f.readlines()
+        except IOError:
+            return ''
+
     def __getFileName(self) -> str:
         """
 
         :return:
         """
         return self.__path \
-               + self.__prefix \
-               + time.strftime(self.__formatFileName) \
+               + self.__name \
                + self.__extension
 
     def __setNewId(self, id: int) -> None:
         """
-        :param content:
+        :param id:
         :return:
         """
         if id > Logger.id:
             Logger.id   = id
 
-    def __write(self, typeName: str = '', title: str = '', content: dict = {}, color: str = '', logId: int= None) -> None:
+    def __write(self, typeName: str = '', title: str = '', content: dict = {}, color: str = '', logId: int = None) -> None:
         """
 
         :param typeName:
@@ -85,40 +115,41 @@ class Logger:
         """
         # write log
         if bool(self.__enableLog):
+            # create file
+            self.__createNewBackupFile()
+
             try:
                 # open log file, if not exist will create
-                f = open(self.__filename, 'a+', encoding= 'utf-8')
+                with open(self.__filename, 'a+', encoding= 'utf-8') as f:
 
-                # validate log Id
-                if logId:
-                    # Reset log id
-                    self.__setNewId(logId)
-                else:
-                    # increase index first
-                    Logger.id += 1
-
-                # do filter
-                if Logger.id not in Logger.hide:
-                    if self.__color:
-                        # generate content format with color
-                        f.write(
-                            f"{self.__logId} <id: {Logger.id}>"
-                            f"{color}>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>{self.__style.ENDC}\n"
-                            f"[{typeName}] {self.__style.TEXT_BOLD}{title}{self.__style.ENDC} \n{self.__dataFormat(content)} \n"
-                            f"{color}<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<{self.__style.ENDC}\n\n\n"
-                        )
-
+                    # validate log Id
+                    if logId:
+                        # Reset log id
+                        self.__setNewId(logId)
                     else:
-                        # generate content format without color
-                        f.write(
-                            f"{self.__logId} <id: {Logger.id}>"
-                            f">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n"
-                            f"[{typeName}] {self.__style.TEXT_BOLD}{title}{self.__style.ENDC} \n{self.__dataFormat(content)} \n{self.__logId} "
-                            f"<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\n\n\n"
-                        )
+                        # increase index first
+                        Logger.id += 1
 
-                # close file
-                f.close()
+                    # do filter
+                    if Logger.id not in Logger.hide:
+                        # check color
+                        if self.__color:
+                            # generate content format with color
+                            f.write(
+                                f"{self.__logId} <id: {Logger.id}>"
+                                f"{color}>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>{self.__style.ENDC}\n"
+                                f"[{typeName}] {self.__style.TEXT_BOLD}{title}{self.__style.ENDC} \n{self.__dataFormat(content)} \n"
+                                f"{color}<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<{self.__style.ENDC}\n\n\n"
+                            )
+
+                        else:
+                            # generate content format without color
+                            f.write(
+                                f"{self.__logId} <id: {Logger.id}>"
+                                f">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n"
+                                f"[{typeName}] {self.__style.TEXT_BOLD}{title}{self.__style.ENDC} \n{self.__dataFormat(content)} \n{self.__logId} "
+                                f"<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\n\n\n"
+                            )
 
             except IOError as e:
                 print(f"IOError open file {e.errno} {e.strerror}({self.__filename})")
@@ -180,10 +211,10 @@ class Logger:
 
         else:
             self.__write(
-                'ERROR'
-                , title
-                , content
-                , self.__style.RED
+                typeName= 'ERROR'
+                , title= title
+                , content= content
+                , color= self.__style.RED
                 , logId=id
             )
 
@@ -212,7 +243,7 @@ class Logger:
                 , logId= id
             )
 
-    def success(self, title: str = '', content: dict = {}, id: int= None) -> None:
+    def success(self, title: str = '', content: dict = {}, id: int = None) -> None:
         """
         :param title:
         :param content:
@@ -237,7 +268,7 @@ class Logger:
                 , logId= id
             )
 
-    def track(self, title: str = '', content: dict = {}, id: int= None) -> None:
+    def track(self, title: str = '', content: dict = {}, id: int = None) -> None:
         """
         :param title:
         :param content:
@@ -251,6 +282,7 @@ class Logger:
                 , content= content
                 , logId= id
             )
+
         else:
             self.__write(
                 typeName= 'TRACK'
@@ -259,7 +291,7 @@ class Logger:
                 , logId= id
             )
 
-    def warning(self, title: str = '', content: dict = {}, id: int= None) -> None:
+    def warning(self, title: str = '', content: dict = {}, id: int = None) -> None:
         """
         :param title:
         :param content:

@@ -1,5 +1,8 @@
 # SmileLog
 ![smilelog](https://user-images.githubusercontent.com/227092/76993446-6e44ff00-697f-11ea-9aed-970b8fa0e126.png)
+**SmileLog 2.0** is a big change for backup file. This feature will make log easy to tail with the same name, and backup a yesterday log file.
+- $ tail -f my-log.log
+- Backup file: my-log-2020-05-25.log
 
 It's gonna change the traditional tracing in another way.\
 What will it assist us:
@@ -10,9 +13,10 @@ What will it assist us:
 4. Generate a new dynamic log filename
 5. Disable the entire tracing in a second
 6. 5 methods for 5 outputs
+7. Backup file if log start a new date
 
 It is available on **PyPi** store via https://pypi.org/project/SmileLog/ \
-To Support my work, please donate me via <a class="bmc-button" target="_blank" href="https://www.buymeacoffee.com/sitthykun"><img src="https://cdn.buymeacoffee.com/buttons/bmc-new-btn-logo.svg" alt="Buy me a Pizza"><span style="margin-left:5px;font-size:28px !important;">Buy me a Pizza</span></a>
+To Support my work, please donate me via <a class="bmc-button" target="_blank" href="https://www.buymeacoffee.com/sitthykun"><img src="https://cdn.buymeacoffee.com/buttons/bmc-new-btn-logo.svg" alt="Buy me a Pizza"><span style="margin-left:5px;font-size:28px !important;">Buy me a Coffee</span></a>
  
 #### Installation
 ```
@@ -65,7 +69,7 @@ Let's Look at its configure would explain more:
 ```
 log	= Logger(
             path: str, 
-            prefix: str, 
+            name: str, 
             extension: str, 
             formatFileName: str, 
             enableLog: bool= True,
@@ -97,10 +101,10 @@ extension = '.log'
 Ex:
 /var/www/my-project/logs/2020-01-19.log
 ```
-- prefix: is prefix name of a new file log. 
+- name: is the name of a new file log. 
 ```
-# set prefix
-prefix= 'my-log-'
+# set name
+name= 'my-log'
 
 Ex: 
 /var/www/my-project/logs/my-log-2020-01-19.log 
@@ -116,14 +120,20 @@ color= True
 or
 color= False
 ```
-- enable: is a main parameter that determines above features. It has two value only.
-	- True: To enable the logging
+- enableLog: allow object to create file.
+	- True: To create a file and write content into log file
 	- False: To disable the logging
 ```
 # set enable
 # enable to write log file
 enableLog= True
-# enable to print out
+```
+
+- enableConsole: to bring something on the screen of log.
+	- True: To print out on terminal
+	- False: No action
+```
+# set enable
 enableConsole= True
 ```
 
