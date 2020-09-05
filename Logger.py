@@ -20,6 +20,8 @@ class Logger:
         """
 
         """
+        # default datetime format
+        self.__dateTimeFormat   = '%H:%M:%S'
         # set color
         self.__color            = color
         # config
@@ -34,7 +36,9 @@ class Logger:
 
         # compute
         self.__filename         = self.__getFileName()
-        self.__logId            = datetime.now().strftime('%H:%M:%S')
+        #
+        self.__keySeries      = ''
+        self.__datetime         = datetime.now().strftime(self.__dateTimeFormat)
         self.__prefixBackupFile = self.__name + '-'
         # inner class
         self.__style            = self.__StyleModifier()
@@ -104,13 +108,14 @@ class Logger:
         if id > Logger.id:
             Logger.id   = id
 
-    def __write(self, typeName: str = '', title: str = '', content: dict = {}, color: str = '', logId: int = None) -> None:
+    def __write(self, typeName: str = '', title: str = '', content: dict = {}, color: str = '', logId: int = None, keySequence: str = None) -> None:
         """
 
         :param typeName:
         :param title:
         :param content:
         :param logId:
+        :param keySequence:
         :return:
         """
         # write log
@@ -136,25 +141,27 @@ class Logger:
                         if self.__color:
                             # generate content format with color
                             f.write(
-                                f"{self.__logId} <id: {Logger.id}>"
+                                f"{self.__datetime} {self.__keySeries} <id: {Logger.id}>"
                                 f"{color}>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>{self.__style.ENDC}\n"
-                                f"[{typeName}] {self.__style.TEXT_BOLD}{title}{self.__style.ENDC} \n{self.__dataFormat(content)} \n"
+                                f"[{typeName}] {self.__style.TEXT_BOLD}{title}{self.__style.ENDC} \n{self.__dataFormat(content)} \n{datetime.now().strftime(self.__dateTimeFormat)}"
                                 f"{color}<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<{self.__style.ENDC}\n\n\n"
                             )
 
                         else:
                             # generate content format without color
                             f.write(
-                                f"{self.__logId} <id: {Logger.id}>"
+                                f"{self.__datetime} {self.__keySeries} <id: {Logger.id}>"
                                 f">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n"
-                                f"[{typeName}] {self.__style.TEXT_BOLD}{title}{self.__style.ENDC} \n{self.__dataFormat(content)} \n{self.__logId} "
+                                f"[{typeName}] {self.__style.TEXT_BOLD}{title}{self.__style.ENDC} \n{self.__dataFormat(content)} \n{datetime.now().strftime(self.__dateTimeFormat)} "
                                 f"<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\n\n\n"
                             )
 
             except IOError as e:
                 print(f"IOError open file {e.errno} {e.strerror}({self.__filename})")
+
             except FileNotFoundError as e:
                 print(f"FileNotFoundError open file {e.errno} {e.strerror}({self.__filename})")
+
             except Exception as e:
                 print(f"Exception open file {e.errno} {e.strerror}({self.__filename})")
 
@@ -167,18 +174,18 @@ class Logger:
                         if self.__color:
                             # generate content format with color
                             print(
-                                f"{self.__logId} <id: {Logger.id}>"
+                                f"{self.__datetime} {self.__keySeries} <id: {Logger.id}>"
                                 f"{color}>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>{self.__style.ENDC}\n"
-                                f"[{typeName}] {self.__style.TEXT_BOLD}{title}{self.__style.ENDC} \n{self.__dataFormat(content)} \n"
+                                f"[{typeName}] {self.__style.TEXT_BOLD}{title}{self.__style.ENDC} \n{self.__dataFormat(content)} \n{datetime.now().strftime(self.__dateTimeFormat)}"
                                 f"{color}<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<{self.__style.ENDC}\n\n\n"
                             )
 
                         else:
                             # generate content format without color
                             print(
-                                f"{self.__logId} <id: {Logger.id}>"
+                                f"{self.__datetime} {self.__keySeries} <id: {Logger.id}>"
                                 f">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n"
-                                f"[{typeName}] {self.__style.TEXT_BOLD}{title}{self.__style.ENDC} \n{self.__dataFormat(content)} \n{self.__logId} "
+                                f"[{typeName}] {self.__style.TEXT_BOLD}{title}{self.__style.ENDC} \n{self.__dataFormat(content)} \n{datetime.now().strftime(self.__dateTimeFormat)} "
                                 f"<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\n\n\n"
                             )
 
@@ -242,6 +249,17 @@ class Logger:
                 , color= self.__style.BLUE
                 , logId= id
             )
+
+    def setKeySeries(self, series: str = None) -> None:
+        """
+        :param series:
+        :return:
+        """
+        if series:
+            self.__keySeries    = series
+
+        else:
+            self.__keySeries    = ''
 
     def success(self, title: str = '', content: dict = {}, id: int = None) -> None:
         """
