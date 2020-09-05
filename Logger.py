@@ -1,6 +1,6 @@
 """
 Author: masakokh
-Version: 2.0.0
+Version: 2.1.0
 """
 import datetime, os, os.path
 from datetime import datetime, timedelta
@@ -141,7 +141,7 @@ class Logger:
                         if self.__color:
                             # generate content format with color
                             f.write(
-                                f"{self.__datetime} {self.__keySeries} <id: {Logger.id}>"
+                                f"{self.__datetime} <{self.__keySeries}> <id: {Logger.id}>"
                                 f"{color}>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>{self.__style.ENDC}\n"
                                 f"[{typeName}] {self.__style.TEXT_BOLD}{title}{self.__style.ENDC} \n{self.__dataFormat(content)} \n{datetime.now().strftime(self.__dateTimeFormat)}"
                                 f"{color}<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<{self.__style.ENDC}\n\n\n"
@@ -150,7 +150,7 @@ class Logger:
                         else:
                             # generate content format without color
                             f.write(
-                                f"{self.__datetime} {self.__keySeries} <id: {Logger.id}>"
+                                f"{self.__datetime} <{self.__keySeries}> <id: {Logger.id}>"
                                 f">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n"
                                 f"[{typeName}] {self.__style.TEXT_BOLD}{title}{self.__style.ENDC} \n{self.__dataFormat(content)} \n{datetime.now().strftime(self.__dateTimeFormat)} "
                                 f"<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\n\n\n"
@@ -174,7 +174,7 @@ class Logger:
                         if self.__color:
                             # generate content format with color
                             print(
-                                f"{self.__datetime} {self.__keySeries} <id: {Logger.id}>"
+                                f"{self.__datetime} <{self.__keySeries}> <id: {Logger.id}>"
                                 f"{color}>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>{self.__style.ENDC}\n"
                                 f"[{typeName}] {self.__style.TEXT_BOLD}{title}{self.__style.ENDC} \n{self.__dataFormat(content)} \n{datetime.now().strftime(self.__dateTimeFormat)}"
                                 f"{color}<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<{self.__style.ENDC}\n\n\n"
@@ -183,7 +183,7 @@ class Logger:
                         else:
                             # generate content format without color
                             print(
-                                f"{self.__datetime} {self.__keySeries} <id: {Logger.id}>"
+                                f"{self.__datetime} <{self.__keySeries}> <id: {Logger.id}>"
                                 f">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n"
                                 f"[{typeName}] {self.__style.TEXT_BOLD}{title}{self.__style.ENDC} \n{self.__dataFormat(content)} \n{datetime.now().strftime(self.__dateTimeFormat)} "
                                 f"<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\n\n\n"
