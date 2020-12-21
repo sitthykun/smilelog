@@ -1,8 +1,10 @@
 """
 Author: masakokh
-Version: 2.1.0
+Version: 2.1.1
 """
-import datetime, os, os.path
+import datetime
+import os
+import os.path
 from datetime import datetime, timedelta
 from typing import Any
 
@@ -37,7 +39,7 @@ class Logger:
         # compute
         self.__filename         = self.__getFileName()
         #
-        self.__keySeries      = ''
+        self.__keySeries        = ''
         self.__datetime         = datetime.now().strftime(self.__dateTimeFormat)
         self.__prefixBackupFile = self.__name + '-'
         # inner class
@@ -46,6 +48,7 @@ class Logger:
     def __backupFileName(self) -> str:
         """
 
+        :return:
         """
         # create a new file
         return self.__path \
@@ -69,6 +72,7 @@ class Logger:
     def __createNewBackupFile(self) -> None:
         """
 
+        :return:
         """
         # yesterday
         yesterdayFileName       = self.__backupFileName()
@@ -102,6 +106,7 @@ class Logger:
 
     def __setNewId(self, id: int) -> None:
         """
+
         :param id:
         :return:
         """
@@ -157,13 +162,13 @@ class Logger:
                             )
 
             except IOError as e:
-                print(f"IOError open file {e.errno} {e.strerror}({self.__filename})")
+                print(f"IOError open file {e.errno} {e.strerror}({self.__filename}), {str(e)}")
 
             except FileNotFoundError as e:
-                print(f"FileNotFoundError open file {e.errno} {e.strerror}({self.__filename})")
+                print(f"FileNotFoundError open file {e.errno} {e.strerror}({self.__filename}), {str(e)}")
 
             except Exception as e:
-                print(f"Exception open file {e.errno} {e.strerror}({self.__filename})")
+                print(f"Exception open file {e.errno} {e.strerror}({self.__filename}), {str(e)}")
 
             # block redundancy
             # print out
@@ -190,16 +195,17 @@ class Logger:
                             )
 
                 except Exception as e:
-                    print(f"Exception open file {e.errno} {e.strerror}({self.__filename})")
+                    print(f"Exception open file {e.errno} {e.strerror}({self.__filename}), {str(e)}")
 
     def disable(self, numbers: list = []) -> None:
         """
 
+        :param numbers:
         :return:
         """
         Logger.hide     = numbers
 
-    def error(self, title: str = '', content: dict = {}, id: int= None) -> None:
+    def error(self, title: str = '', content: dict = {}, id: int = None) -> None:
         """
 
         :param title:
@@ -222,11 +228,38 @@ class Logger:
                 , title= title
                 , content= content
                 , color= self.__style.RED
-                , logId=id
+                , logId= id
             )
 
-    def info(self, title: str = '', content: dict = {}, id: int= None) -> None:
+    def fail(self, title: str = '', content: dict = {}, id: int = None) -> None:
         """
+
+        :param title:
+        :param content:
+        :param id:
+        :return:
+        """
+        if self.__color:
+            self.__write(
+                typeName= f'{self.__style.MAGENTA}FAIL{self.__style.ENDC}'
+                , title= f'{self.__style.MAGENTA}{title}{self.__style.ENDC}'
+                , content= content
+                , color= self.__style.MAGENTA
+                , logId= id
+            )
+
+        else:
+            self.__write(
+                typeName= 'FAIL'
+                , title= title
+                , content= content
+                , color= self.__style.MAGENTA
+                , logId= id
+            )
+
+    def info(self, title: str = '', content: dict = {}, id: int = None) -> None:
+        """
+
         :param title:
         :param content:
         :param id:
@@ -335,12 +368,18 @@ class Logger:
             )
 
     class __StyleModifier:
+        # Foreground
         BLUE            = '\033[94m'
+        BLACK           = '\033[90m'
+        CYAN            = '\033[96m'
         GREEN           = '\033[92m'
+        GREY            = '\033[90m'
+        MAGENTA         = '\033[95m'
         RED             = '\033[91m'
+        WHITE           = '\033[97m'
         YELLOW          = '\033[93m'
-
+        # Text style
         TEXT_BOLD       = '\033[1m'
         TEXT_UNDERLINE  = '\033[4m'
-
+        # End up color
         ENDC            = '\033[0m'
