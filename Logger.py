@@ -1,6 +1,6 @@
 """
 Author: masakokh
-Version: 3.0.0
+Version: 3.0.1
 """
 import datetime
 import os
@@ -20,6 +20,13 @@ class Logger:
     def __init__(self, path: str, name: str, extension: str, formatFileName: str, enableLog: bool= True, enableConsole: bool= True, color: bool = True):
         """
 
+        :param path:
+        :param name:
+        :param extension:
+        :param formatFileName:
+        :param enableLog:
+        :param enableConsole:
+        :param color:
         """
         # default datetime format
         self.__dateTimeFormat   = '%H:%M:%S'

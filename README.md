@@ -7,13 +7,15 @@
 It's gonna change the traditional tracing in another way.\
 What will it assist us:
  
-1. Colorise output
-2. Be able to stop any output via its public id
-3. Split each output with a big span and symbols
-4. Generate a new dynamic log filename
+1. Showing the colorized log by following the standard color
+2. Ignoring any track by reading id in the list 
+3. Each statement list down with a big span and symbols
+4. Using a static file to output the content that will be easier
 5. Disable the entire tracing in a second
 6. 5 methods for 5 outputs
 7. Backup file if log start a new date
+8. Separating a new file with a new file name
+This feature will cover to a specific tracking.
 
 It is available on **PyPi** store via https://pypi.org/project/SmileLog/ \
 To Support my work, please donate me via <a class="bmc-button" target="_blank" href="https://www.buymeacoffee.com/sitthykun"><img src="https://cdn.buymeacoffee.com/buttons/bmc-new-btn-logo.svg" alt="Buy me a Pizza"><span style="margin-left:5px;font-size:28px !important;">Buy me a Coffee</span></a>
@@ -31,6 +33,7 @@ Use in different situation, and show up in different color
 3. success: success(title, content, id= None)
 4. warning: warning(title, content, id= None)
 5. error: error(title, content, id= None)
+6. fail: fail(title, content, id= None)
 ```
 - title is a string
 - content can be a string or dict
