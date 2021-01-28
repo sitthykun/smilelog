@@ -1,6 +1,6 @@
 """
 Author: masakokh
-Version: 3.0.1
+Version: 3.0.2
 """
 import datetime
 import os
@@ -47,7 +47,6 @@ class Logger:
         #
         self.__keySeries        = ''
         self.__datetime         = datetime.now().strftime(self.__dateTimeFormat)
-        self.__prefixBackupFile = self.__name + '-'
         # inner class
         self.__style            = self.__StyleModifier()
         # session as uuid or md5
@@ -60,7 +59,6 @@ class Logger:
         """
         # create a new file
         return self.__path \
-                + self.__prefixBackupFile \
                 + datetime.strftime(datetime.now() - timedelta(1), self.__formatFileName) \
                 + self.__extension
 
@@ -121,7 +119,8 @@ class Logger:
         :param typeName:
         :param title:
         :param content:
-        :param logId
+        :param color:
+        :param logId:
         :return:
         """
         # write log
@@ -172,7 +171,7 @@ class Logger:
                             # output
                             f.write(tempContent)
 
-                            # verify first
+                            # verify first and write if it attends
                             if self.__sessionKey:
                                 # output content to session's file
                                 self.__writeSession(tempContent)
@@ -224,7 +223,7 @@ class Logger:
         """
         try:
             # open log file, if not exist will create
-            with open(self.__sessionKey + self.__extension, 'a+', encoding='utf-8') as fs:
+            with open(self.__sessionKey + self.__extension, 'a+', encoding= 'utf-8') as fs:
                 fs.write(content)
 
         except IOError as e:
