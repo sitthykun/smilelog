@@ -114,8 +114,7 @@ class Logger:
         :param typeName:
         :param title:
         :param content:
-        :param logId:
-        :param keySequence:
+        :param logId
         :return:
         """
         # write log
@@ -175,16 +174,13 @@ class Logger:
                             tempContent = None
 
             except IOError as e:
-                # print(f"Logger.__write output file IOError: open file {e.errno} {e.strerror}({self.__filename}), {str(e)}")
-                pass
+                print(f'Logger.__write output file IOError: open file {e.errno} {e.strerror}({self.__filename}), {str(e)}')
 
             except FileNotFoundError as e:
-                # print(f"Logger.__write output file FileNotFoundError: open file {e.errno} {e.strerror}({self.__filename}), {str(e)}")
-                pass
+                print(f'Logger.__write output file FileNotFoundError: open file {e.errno} {e.strerror}({self.__filename}), {str(e)}')
 
             except Exception as e:
-                # print(f"Logger.__write output file Exception: open file {e.errno} {e.strerror}({self.__filename}), {str(e)}")
-                pass
+                print(f'Logger.__write output file Exception: open file {e.errno} {e.strerror}({self.__filename}), {str(e)}')
 
             # block redundancy
             # print out
@@ -211,7 +207,7 @@ class Logger:
                             )
 
                 except Exception as e:
-                    print(f"Logger.__write print Exception: open file {e.errno} {e.strerror}({self.__filename}), {str(e)}")
+                    print(f'Logger.__write print Exception: open file {e.errno} {e.strerror}({self.__filename}), {str(e)}')
 
     def __writeSession(self, content: Any) -> None:
         """
@@ -225,16 +221,13 @@ class Logger:
                 fs.write(content)
 
         except IOError as e:
-            # print(f"Logger.__writeSession output file IOError: open file {e.errno} {e.strerror}({self.__filename}), {str(e)}")
-            pass
+            print(f'Logger.__writeSession output file IOError: open file {e.errno} {e.strerror}({self.__filename}), {str(e)}')
 
         except FileNotFoundError as e:
-            # print(f"Logger.__writeSession output file FileNotFoundError: open file {e.errno} {e.strerror}({self.__filename}), {str(e)}")
-            pass
+            print(f'Logger.__writeSession output file FileNotFoundError: open file {e.errno} {e.strerror}({self.__filename}), {str(e)}')
 
         except Exception as e:
-            # print(f"Logger.__writeSession output file Exception: open file {e.errno} {e.strerror}({self.__filename}), {str(e)}")
-            pass
+            print(f'Logger.__writeSession output file Exception: open file {e.errno} {e.strerror}({self.__filename}), {str(e)}')
 
     def disable(self, numbers: list = []) -> None:
         """

@@ -123,7 +123,7 @@ color= True
 or
 color= False
 ```
-- enableLog: allow object to create file.
+- enableLog: allow an object to create the file.
 	- True: To create a file and write content into log file
 	- False: To disable the logging
 ```
@@ -142,7 +142,7 @@ enableConsole= True
 
 ### Disable print out
 The most feature developer guy needs.\
-It will disable only the index that we set in the disable list.
+It will disable only the index that we set in disable list.
 ##### Note: 
 console and log object are not related each other.
 
@@ -156,7 +156,7 @@ log.disable([1,2,3,7,8,9])
 ```
 
 ### Output
-It's gonna show like this:
+It's going to show like this:
 ```
 02:48:29 <NbcseX32cDse> <id: 4>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 [SUCCESS] Success 
@@ -185,5 +185,3 @@ Hello String
 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 ```
-##### My unique slogan is:
-a little developer in the big world \o/
