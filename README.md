@@ -1,7 +1,11 @@
 # SmileLog
 ![smilelog](https://user-images.githubusercontent.com/227092/76993446-6e44ff00-697f-11ea-9aed-970b8fa0e126.png)
-**SmileLog 2.0** is a big change for backup file. This feature will make log easy to tail with the same name, and backup a yesterday log file.
-- $ tail -f my-log.log
+**SmileLog 3.0** is a brilliant version.
+- tail -f my-log.log
+- Separating log file by session key
+
+**SmileLog 2.0** is a big change for the backup file feature. This feature will make log easy to tail with the same name, and backup a yesterday log file.
+- tail -f my-log.log
 - Backup file: my-log-2020-05-25.log
 
 It's gonna change the traditional tracing in another way.\
@@ -27,7 +31,7 @@ To Support my work, please donate me via <a class="bmc-button" target="_blank" h
 
 
 ### 5 Methods
-Use in different situation, and show up in different color
+Use in the different situation, and show up in different color
 1. track: track(title, content, id= None)
 2. information: info(title, content, id= None)
 3. success: success(title, content, id= None)
@@ -158,9 +162,19 @@ log.disable([1,2,3,7,8,9])
 
 ```
 
-### Output
-It's going to show like this:
+### Separate a session file 
+Here is the method to separate normal log file to a specific.
+Follow the setting:  
+
 ```
+log.setSessionKey('cbc98494543823442425488df')
+```
+##### Note: 
+To stop running a session, just set it the None
+```
+log.setSessionKey(None)
+```
+
 02:48:29 <NbcseX32cDse> <id: 4>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 [SUCCESS] Success 
 {'data': 'my content'} 
