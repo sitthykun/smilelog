@@ -169,8 +169,9 @@ Follow the setting:
 ```
 log.setSessionKey('cbc98494543823442425488df')
 ```
+It will separate from the default log, and generate a new file as 'cbc98494543823442425488df.log'.
 ##### Note: 
-To stop running a session, just set it the None
+To stop running a session, just set it the None.
 ```
 log.setSessionKey(None)
 ```
