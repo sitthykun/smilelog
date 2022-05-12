@@ -31,7 +31,7 @@ class Logger:
 		"""
 		# default datetime format
 		# 2022-05-12 21:40:20.345
-		self.__dateTimeFormat   = '	%Y-%m-%d %H:%M:%S.%f'
+		self.__dateTimeFormat   = '%Y-%m-%d %H:%M:%S.%f'
 		# set color
 		self.__color            = color
 		self.__line             = line
