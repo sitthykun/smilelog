@@ -49,7 +49,7 @@ class Logger:
 		self.__keySeries        = ''
 		self.__datetime         = datetime.now().strftime(self.__dateTimeFormat)
 		# session as uuid or md5
-		self.__sessionKey       = ''
+		self.__keySession       = ''
 
 	def __backupFileName(self) -> str:
 		"""
@@ -157,7 +157,7 @@ class Logger:
 				self.__writeFile(content= f'{contentHead}{contentBody}')
 
 				# verify first
-				if self.__sessionKey:
+				if self.__keySession:
 					# output content to specific file via session's
 					self.__writeSessionFile(content= f'{contentHead}{contentBody}')
 
@@ -245,17 +245,17 @@ class Logger:
 		"""
 		try:
 			# open log file, if not exist will create
-			with open(f'{self.__path}{self.__sessionKey}{self.__extension}', 'a+', encoding= 'utf-8') as fs:
+			with open(f'{self.__path}{self.__keySession}{self.__extension}', 'a+', encoding= 'utf-8') as fs:
 				fs.write(content)
 
 		except FileNotFoundError as e:
-			print(f'Logger.__writeSessionFile output file FileNotFoundError: open file {e.errno} {e.strerror}({self.__path}{self.__sessionKey}{self.__extension}), {str(e)}')
+			print(f'Logger.__writeSessionFile output file FileNotFoundError: open file {e.errno} {e.strerror}({self.__path}{self.__keySession}{self.__extension}), {str(e)}')
 
 		except IOError as e:
-			print(f'Logger.__writeSessionFile output file IOError: open file {e.errno} {e.strerror}({self.__path}{self.__sessionKey}{self.__extension}), {str(e)}')
+			print(f'Logger.__writeSessionFile output file IOError: open file {e.errno} {e.strerror}({self.__path}{self.__keySession}{self.__extension}), {str(e)}')
 
 		except Exception as e:
-			print(f'Logger.__writeSessionFile output file Exception: open file ({self.__path}{self.__sessionKey}{self.__extension}), {str(e)}')
+			print(f'Logger.__writeSessionFile output file Exception: open file ({self.__path}{self.__keySession}{self.__extension}), {str(e)}')
 
 	def disableIds(self, numbers: list = None) -> None:
 		"""
@@ -321,24 +321,20 @@ class Logger:
 		:param series:
 		:return:
 		"""
-		if series:
-			self.__keySeries    = series
+		self.__keySeries    = series
 
-		else:
-			self.__keySeries    = ''
-
-	def setSessionKey(self, sessionKey: str= None) -> None:
+	def setKeySession(self, sessionKey: str= None) -> None:
 		"""
 
 		:param sessionKey:
 		:return:
 		"""
 		if sessionKey and len(sessionKey) > 32:
-			self.__sessionKey       = sessionKey[0:31]
+			self.__keySession       = sessionKey[0:31]
 
 		else:
 			# accept even empty or none
-			self.__sessionKey       = sessionKey
+			self.__keySession       = sessionKey
 
 	def success(self, title: str = '', content: dict = None, id: int = None) -> None:
 		"""

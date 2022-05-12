@@ -123,6 +123,16 @@ enableLog= True
 enableConsole= True
 ```
 
+### Series
+Just a series name of output
+- **setKeySeries**: date
+```
+# set value
+log.setKeySeries('Insert Data')
+# stop
+log.setKeySeries()
+```
+
 ### Disable print out
 The most feature developer guy needs.\
 It will disable only the index that we set in disable list.
@@ -140,16 +150,16 @@ log.disableIds([1,2,3,7,8,9])
 ### Separate a session file 
 Here is the method to separate normal log file to a specific.
 Follow the setting: 
-- **setSessionKey**: must be a string and maximum length 32
+- **setKeySession**: must be a string and maximum length 32
 
 ```
-log.setSessionKey('cbc98494543823442425488df')
+log.setKeySession('cbc98494543823442425488df')
 ```
 It will separate from the default log, and generate a new file as 'cbc98494543823442425488df.log'.
 ##### Note: 
 To stop running a session, just set it the None.
 ```
-log.setSessionKey('')
+log.setKeySession()
 ```
 
 2022-05-12 21:40:20.345 <id: 4>\
@@ -160,7 +170,7 @@ _>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\
 
 
 
-2022-05-12 21:40:20.345 <id: 5> NbcseX32\
+2022-05-12 21:40:20.345 <id: 5> Insert Data\
 _>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\
 [WARNING] **Warning**\
 {'data': 'my content'}\
@@ -168,7 +178,7 @@ _>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\
 
 
 
-2022-05-12 21:40:20.345 <id: 6> NbcseX32\
+2022-05-12 21:40:20.345 <id: 6> Delete Row\
 [TRACK] My Title\
 {'data': 'my content'}
 
