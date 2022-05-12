@@ -51,21 +51,13 @@ class Logger:
 		# session as uuid or md5
 		self.__keySession       = ''
 
-	def __backupFileName(self) -> str:
-		"""
-
-		:return:
-		"""
-		# generate a filename
-		return f'{self.__path}{(datetime.now() - timedelta(1)).strftime(self.__formatFileName)}{self.__extension}'
-
 	def __createNewBackupFile(self) -> None:
 		"""
 
 		:return:
 		"""
 		# backup the yesterday content and use the yesterday as name of the backup file
-		yesterdayFileName       = self.__backupFileName()
+		yesterdayFileName       = self.__getBackupFileName()
 
 		# check yesterday file with len of current file
 		if not os.path.exists(yesterdayFileName) and len(self.__getContentFile(self.__filename)) > 0:
@@ -75,6 +67,14 @@ class Logger:
 				self.__filename
 				, yesterdayFileName
 			)
+
+	def __getBackupFileName(self) -> str:
+		"""
+
+		:return:
+		"""
+		# generate a filename
+		return f'{self.__path}{(datetime.now() - timedelta(1)).strftime(self.__formatFileName)}{self.__extension}'
 
 	def __getContentFile(self, fileName: str) -> str:
 		"""
@@ -148,7 +148,7 @@ class Logger:
 		# do filter
 		if Logger.id not in Logger.hide:
 			# update content
-			contentBody = self.__getContentBody(typeName= typeName, title=title, content= self.__getStr(content= content), color= color)
+			contentBody = self.__getContentBody(typeName= typeName, title= title, content= self.__getStr(content= content), color= color)
 			contentHead = self.__getContentHead(logId= Logger.id)
 
 			# enable file log
