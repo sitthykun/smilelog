@@ -76,6 +76,43 @@ class Logger:
 		# generate a filename
 		return f'{self.__path}{(datetime.now() - timedelta(1)).strftime(self.__formatFileName)}{self.__extension}'
 
+	def __getContentBody(self, typeName: str, title: str, content: str, color: str) -> str:
+		"""
+
+		:param typeName:
+		:param title:
+		:param content:
+		:param color:
+		:return:
+		"""
+		lineStart   = ''
+		lineEnd     = ''
+		cHead       = ''
+		cBody       = f'[{typeName}] '
+		cFoot       = ''
+
+		# add line to content
+		if bool(self.__line):
+			lineStart   = '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
+			lineEnd     = '<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<'
+			# update
+			cHead       = lineStart
+			cFoot       = lineEnd
+
+		# add color, style
+		if bool(self.__color):
+			# update
+			cHead       = f'{color}{cHead}{self.__StyleModifier.ENDC}'
+			cFoot       = f'{color}{cFoot}{self.__StyleModifier.ENDC}'
+			cBody       = f'{color}{cBody}{self.__StyleModifier.ENDC}{self.__StyleModifier.TEXT_BOLD}{title}{self.__StyleModifier.ENDC}'
+
+		else:
+			cBody       = f'{cBody}{title}'
+
+		# final content
+		# f"{cBody}{self.__getStr(content)} \n{datetime.now().strftime(self.__dateTimeFormat)}" \
+		return f'\n{cHead}\n{cBody}{self.__getStr(content)} \n{cFoot}\n\n' if bool(self.__line) else f'\n{cBody}\n'
+
 	def __getContentFile(self, fileName: str) -> str:
 		"""
 
@@ -98,6 +135,19 @@ class Logger:
 
 		except Exception:
 			return ''
+
+	def __getContentHead(self, logId: int) -> str:
+		"""
+
+		:param logId:
+		:return:
+		"""
+		# final data
+		if self.__keySeries:
+			return f'{self.__datetime} <id: {logId}> {self.__keySeries}\n'
+
+		else:
+			return f'{self.__datetime} <id: {logId}>\n'
 
 	def __getStr(self, content: Any) -> str:
 		"""
@@ -165,56 +215,6 @@ class Logger:
 			if bool(self.__enableConsole):
 				# console
 				print(f'{contentHead}{contentBody}')
-
-	def __getContentBody(self, typeName: str, title: str, content: str, color: str) -> str:
-		"""
-
-		:param typeName:
-		:param title:
-		:param content:
-		:param color:
-		:return:
-		"""
-		lineStart   = ''
-		lineEnd     = ''
-		cHead       = ''
-		cBody       = f'[{typeName}] '
-		cFoot       = ''
-
-		# add line to content
-		if bool(self.__line):
-			lineStart   = '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
-			lineEnd     = '<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<'
-			# update
-			cHead       = lineStart
-			cFoot       = lineEnd
-
-		# add color, style
-		if bool(self.__color):
-			# update
-			cHead       = f'{color}{cHead}{self.__StyleModifier.ENDC}'
-			cFoot       = f'{color}{cFoot}{self.__StyleModifier.ENDC}'
-			cBody       = f'{color}{cBody}{self.__StyleModifier.ENDC}{self.__StyleModifier.TEXT_BOLD}{title}{self.__StyleModifier.ENDC}'
-
-		else:
-			cBody       = f'{cBody}{title}'
-
-		# final content
-		# f"{cBody}{self.__getStr(content)} \n{datetime.now().strftime(self.__dateTimeFormat)}" \
-		return f'\n{cHead}\n{cBody}{self.__getStr(content)} \n{cFoot}\n\n' if bool(self.__line) else f'\n{cBody}\n'
-
-	def __getContentHead(self, logId: int) -> str:
-		"""
-
-		:param logId:
-		:return:
-		"""
-		# final data
-		if self.__keySeries:
-			return f'{self.__datetime} <id: {logId}> {self.__keySeries}\n'
-
-		else:
-			return f'{self.__datetime} <id: {logId}>\n'
 
 	def __writeFile(self, content: str) -> None:
 		"""
