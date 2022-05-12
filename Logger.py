@@ -1,6 +1,6 @@
 """
 Author: masakokh
-Version: 3.1.0
+Version: 3.2.0
 """
 import datetime
 import os
@@ -17,21 +17,22 @@ class Logger:
 	# index of output
 	id      = 0
 
-	def __init__(self, path: str, name: str, extension: str, formatFileName: str, enableLog: bool= True, enableConsole: bool= True, line: bool= True, color: bool= True):
+	def __init__(self, path: str, filename: str, extension: str, enableLog: bool= True, enableConsole: bool= True, line: bool= True, color: bool= True):
 		"""
 
 		:param path:
-		:param name:
+		:param filename:
 		:param extension:
-		:param formatFileName:
 		:param enableLog:
 		:param enableConsole:
 		:param line:
 		:param color:
 		"""
 		# default datetime format
+		# 2020-05-18
+		self.__formatFileName   = '%Y-%m-%d'
 		# 2022-05-12 21:40:20.345
-		self.__dateTimeFormat   = '%Y-%m-%d %H:%M:%S.%f'
+		self.__dateTimeFormat   = f'{self.__formatFileName} %H:%M:%S.%f'
 		# set color
 		self.__color            = color
 		self.__line             = line
@@ -39,14 +40,11 @@ class Logger:
 		self.__enableLog        = enableLog
 		self.__enableConsole    = enableConsole
 		self.__extension        = extension
-		# 2020-05-18
-		self.__formatFileName   = formatFileName    or ''
 		# path + /
-		self.__name             = name
 		self.__path             = path
 
 		# compute
-		self.__filename         = f'{self.__path}{self.__name}{self.__extension}'
+		self.__filename         = f'{self.__path}{filename}{self.__extension}'
 		#
 		self.__keySeries        = ''
 		self.__datetime         = datetime.now().strftime(self.__dateTimeFormat)
@@ -86,7 +84,7 @@ class Logger:
 		"""
 		try:
 			# init
-			content = ''
+			content	= ''
 
 			# read file
 			with open(fileName) as f:
@@ -325,13 +323,18 @@ class Logger:
 		else:
 			self.__keySeries    = ''
 
-	def setSessionKey(self, sessionKey: str) -> None:
+	def setSessionKey(self, sessionKey: str= None) -> None:
 		"""
 
 		:param sessionKey:
 		:return:
 		"""
-		self.__sessionKey       = sessionKey
+		if sessionKey and len(sessionKey) > 32:
+			self.__sessionKey       = sessionKey[0:31]
+
+		else:
+			# accept even empty or none
+			self.__sessionKey       = sessionKey
 
 	def success(self, title: str = '', content: dict = None, id: int = None) -> None:
 		"""
@@ -365,7 +368,7 @@ class Logger:
 
 	def warning(self, title: str = '', content: dict = None, id: int = None) -> None:
 		"""
-		
+
 		:param title:
 		:param content:
 		:param id:

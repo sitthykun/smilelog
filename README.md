@@ -1,14 +1,10 @@
 # SmileLog
 ![smilelog](https://user-images.githubusercontent.com/227092/76993446-6e44ff00-697f-11ea-9aed-970b8fa0e126.png)
-**SmileLog 3.0** is a brilliant version.
-- tail -f my-log.log
+**SmileLog 3.1** is a brilliant version.
+- tail -f access.log
 - Separating log file by session key
 
-**SmileLog 2.0** is a big change for the backup file feature. This feature will make log easy to tail with the same name, and backup a yesterday log file.
-- tail -f my-log.log
-- Backup file: my-log-2020-05-25.log
-
-It's gonna change the traditional tracing in another way.\
+It's going to change the traditional tracing in another way.\
 What will it assist us:
  
 1. Showing the colorized log by following the standard color
@@ -29,7 +25,6 @@ To Support my work, please donate me via <a class="bmc-button" target="_blank" h
 # pip3 install SmileLog
 ```
 
-
 ### 5 Methods
 Use in the different situation, and show up in different color
 1. track: track(title, content, id= None)
@@ -41,31 +36,32 @@ Use in the different situation, and show up in different color
 ```
 - title is a string
 - content can be a string or dict
+Figure (version 2.0)
 ```
 ![smilelog-output](https://user-images.githubusercontent.com/227092/76993665-c845c480-697f-11ea-862d-8622cca09f14.png)
 
 #### Start using in the simple way:
 
 ```
-from smilelog import Logger, Consoler
+from smilelog import Logger
 
 
 # first instant
 log	= Logger(
-            enable= True
+            enableLog= True
 	)
 
 # try to print out
 log.info(
 	'My Info Title'
 	, {'data':'My Dictionary Content'}
-	)
+)
 
 # success method
 log.success(
 	'My Success Title'
-        , 'My String'
-        )
+	, 'My String'
+)
 
 # setKeySeries is a new method to indicate to the token of a long message
 log.setKeySeries('NbcseX32cDse')
@@ -79,58 +75,38 @@ Let's Look at its configure would explain more:
 ```
 log	= Logger(
             path: str, 
-            name: str, 
-            extension: str, 
-            formatFileName: str, 
+            filename: str, 
+            extension: str,  
             enableLog: bool= True,
             enableConsole: bool= True,
-            color: bool = True
+            line: bool= True
+            color: bool= True
 	)
 ```
-- path: is a directory
+- **path**: is a directory
 ```
 Ex:
 /var/www/my-project/logs/
-```
-- formatFileName: is suffix name of log file
-```
-# set filename
-formatFileName = 'my-logger'
-Ex:
-/var/www/my-project/logs/my-logger
 
-# in dynamic way
-formatFileName = '%Y-%m-%d'
-Ex:
-/var/www/my-project/logs/2020-01-19
 ```
-- extension: is an extension of log file. The standard extension is '.log'
-```
-# set extension
-extension = '.log'
-Ex:
-/var/www/my-project/logs/2020-01-19.log
-```
-- name: is the name of a new file log. 
+- **filename**: is the name of a new file log. 
 ```
 # set name
-name= 'my-log'
+filename= 'access'
 
 Ex: 
-/var/www/my-project/logs/my-log-2020-01-19.log 
+/var/www/my-project/logs/access.log 
 # some app move it into system log directory, it is an advantage of prefix
 
-Ex:
-/var/log/my-project-2020-01-19.log
 ```
-- color: is for showing the color on terminal with tail command or terminal editor.
+- **color**: is for showing the color on terminal with tail command or terminal editor.
 ```
 # set color
 color= True
 or
 color= False
 ```
-- enableLog: allow an object to create the file.
+- **enableLog**: allow an object to create the file.
 	- True: To create a file and write content into log file
 	- False: To disable the logging
 ```
@@ -139,7 +115,7 @@ color= False
 enableLog= True
 ```
 
-- enableConsole: to bring something on the screen of log.
+- **enableConsole**: to bring something on the screen of log.
 	- True: To print out on terminal
 	- False: No action
 ```
@@ -150,21 +126,21 @@ enableConsole= True
 ### Disable print out
 The most feature developer guy needs.\
 It will disable only the index that we set in disable list.
-##### Note: 
-console and log object are not related each other.
+- **disableIds**: hide those ids.
+  - parameter must be Array
 
 ```
 # Logger instant
 # Ex: Logger logged 10 times
 # but we will show some id except 1,2,3,7,8,9
 # do this
-log.disable([1,2,3,7,8,9])
-
+log.disableIds([1,2,3,7,8,9])
 ```
 
 ### Separate a session file 
 Here is the method to separate normal log file to a specific.
-Follow the setting:  
+Follow the setting: 
+- **setSessionKey**: must be a string and maximum length 32
 
 ```
 log.setSessionKey('cbc98494543823442425488df')
@@ -173,33 +149,32 @@ It will separate from the default log, and generate a new file as 'cbc9849454382
 ##### Note: 
 To stop running a session, just set it the None.
 ```
-log.setSessionKey(None)
+log.setSessionKey('')
 ```
 
-02:48:29 <NbcseX32cDse> <id: 4>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-[SUCCESS] Success 
-{'data': 'my content'} 
+2022-05-12 21:40:20.345 <NbcseX32cDse> <id: 4>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\
+[FAIL] **My Title**\
+{'data': 'my content'}  
 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
 
-02:48:29 <NbcseX32cDse> <id: 5>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-[WARNING] Warning 
-{'data': 'my content'} 
+2022-05-12 21:40:20.345 <NbcseX32cDse> <id: 5>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\
+[WARNING] **Warning**\
+{'data': 'my content'}\
 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
 
-02:48:29 <NbcseX32cDse> <id: 6>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-[SUCCESS] Success 
-{'data': 'my content'} 
+2022-05-12 21:40:20.345 <NbcseX32cDse> <id: 6>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\
+[TRACK] **My Title**\
+{'data': 'my content'}\
 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
 
-02:48:29 <NbcseX32cDse> <id: 10>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-[SUCCESS] Success 
-Hello String 
+2022-05-12 21:40:20.345 <NbcseX32cDse> <id: 10>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\
+[SUCCESS] **Success**\
+Hello String\
 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
 ```
