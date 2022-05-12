@@ -16,6 +16,7 @@ What will it assist us:
 7. Backup file if log start a new date
 8. Separating a new file with a new file name
 This feature will cover to a specific tracking.
+9. Group the log with specific key(series key)
 
 It is available on **PyPi** store via https://pypi.org/project/SmileLog/ \
 To Support my work, please donate me via <a class="bmc-button" target="_blank" href="https://www.buymeacoffee.com/sitthykun"><img src="https://cdn.buymeacoffee.com/buttons/bmc-new-btn-logo.svg" alt="Buy me a Pizza"><span style="margin-left:5px;font-size:28px !important;">Buy me a Coffee</span></a>
