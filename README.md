@@ -170,11 +170,11 @@ _>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\
 
 2022-05-12 21:40:20.345 (NbcseX32) <id: 6>\
 [TRACK] My Title\
-{'data': 'my content'}\
+{'data': 'my content'}
 
 
 
 2022-05-12 21:40:20.345 <id: 10>\
 [SUCCESS] **Success**\
-Hello String\
+Hello String
 ```
