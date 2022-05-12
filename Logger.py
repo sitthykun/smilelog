@@ -210,7 +210,11 @@ class Logger:
 		:return:
 		"""
 		# final data
-		return f'{self.__datetime} <{self.__keySeries}> <id: {logId}>\n'
+		if self.__keySeries:
+			return f'{self.__datetime} ({self.__keySeries}) <id: {logId}>\n'
+
+		else:
+			return f'{self.__datetime} <id: {logId}>\n'
 
 	def __writeFile(self, content: str) -> None:
 		"""
