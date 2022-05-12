@@ -28,10 +28,11 @@ class Logger:
 		:param line:
 		:param color:
 		"""
-		# default datetime format
-		# 2020-05-18
+		# datetime format
+		# ex: 2020-05-18
 		self.__formatFileName   = '%Y-%m-%d'
-		# 2022-05-12 21:40:20.345
+		# full datetime format
+		# ex: 2022-05-12 21:40:20.345
 		self.__dateTimeFormat   = f'{self.__formatFileName} %H:%M:%S.%f'
 		# set color
 		self.__color            = color
@@ -42,12 +43,12 @@ class Logger:
 		self.__extension        = extension
 		# path + /
 		self.__path             = path
-
 		# compute
 		self.__filename         = f'{self.__path}{filename}{self.__extension}'
-		#
-		self.__keySeries        = ''
+		# static datetime
 		self.__datetime         = datetime.now().strftime(self.__dateTimeFormat)
+		# series
+		self.__keySeries        = ''
 		# session as uuid or md5
 		self.__keySession       = ''
 
