@@ -1,6 +1,6 @@
 """
 Author: masakokh
-Version: 3.0.2
+Version: 3.1.0
 """
 import datetime
 import os
@@ -9,423 +9,385 @@ from typing import Any
 
 
 class Logger:
-    """
+	"""
 
-    """
-    # hide all numbers that added
-    hide    = []
-    # index of output
-    id      = 0
+	"""
+	# hide all numbers that added
+	hide    = []
+	# index of output
+	id      = 0
 
-    def __init__(self, path: str, name: str, extension: str, formatFileName: str, enableLog: bool= True, enableConsole: bool= True, color: bool = True):
-        """
+	def __init__(self, path: str, name: str, extension: str, formatFileName: str, enableLog: bool= True, enableConsole: bool= True, line: bool= True, color: bool= True):
+		"""
 
-        :param path:
-        :param name:
-        :param extension:
-        :param formatFileName:
-        :param enableLog:
-        :param enableConsole:
-        :param color:
-        """
-        # default datetime format
-        self.__dateTimeFormat   = '%H:%M:%S'
-        # set color
-        self.__color            = color
-        # config
-        self.__enableLog        = enableLog
-        self.__enableConsole    = enableConsole
-        self.__extension        = extension
-        # 2020-05-18
-        self.__formatFileName   = formatFileName
-        # path + /
-        self.__name             = name
-        self.__path             = path
+		:param path:
+		:param name:
+		:param extension:
+		:param formatFileName:
+		:param enableLog:
+		:param enableConsole:
+		:param line:
+		:param color:
+		"""
+		# default datetime format
+		self.__dateTimeFormat   = '%H:%M:%S'
+		# set color
+		self.__color            = color
+		self.__line             = line
+		# config
+		self.__enableLog        = enableLog
+		self.__enableConsole    = enableConsole
+		self.__extension        = extension
+		# 2020-05-18
+		self.__formatFileName   = formatFileName    or ''
+		# path + /
+		self.__name             = name
+		self.__path             = path
 
-        # compute
-        self.__filename         = self.__path + self.__name + self.__extension
-        #
-        self.__keySeries        = ''
-        self.__datetime         = datetime.now().strftime(self.__dateTimeFormat)
-        # inner class
-        self.__style            = self.__StyleModifier()
-        # session as uuid or md5
-        self.__sessionKey       = ''
+		# compute
+		self.__filename         = f'{self.__path}{self.__name}{self.__extension}'
+		#
+		self.__keySeries        = ''
+		self.__datetime         = datetime.now().strftime(self.__dateTimeFormat)
+		# inner class
+		self.__style            = self.__StyleModifier()
+		# session as uuid or md5
+		self.__sessionKey       = ''
 
-    def __backupFileName(self) -> str:
-        """
+	def __backupFileName(self) -> str:
+		"""
 
-        :return:
-        """
-        # create a new file
-        return self.__path \
-                + datetime.strftime(datetime.now() - timedelta(1), self.__formatFileName) \
-                + self.__extension
+		:return:
+		"""
+		# generate a filename
+		return f'{self.__path}{(datetime.now() - timedelta(1)).strftime(self.__formatFileName)}{self.__extension}'
 
-    def __createNewBackupFile(self) -> None:
-        """
+	def __createNewBackupFile(self) -> None:
+		"""
 
-        :return:
-        """
-        # yesterday
-        yesterdayFileName       = self.__backupFileName()
+		:return:
+		"""
+		# backup the yesterday content and use the yesterday as name of the backup file
+		yesterdayFileName       = self.__backupFileName()
 
-        # check yesterday file with len of current file
-        if not os.path.exists(yesterdayFileName) and len(self.__getContentFile(self.__getFileName())) > 0:
-            # rename current file to backup file
-            # that will move content too
-            os.rename(self.__getFileName(), yesterdayFileName)
+		# check yesterday file with len of current file
+		if not os.path.exists(yesterdayFileName) and len(self.__getContentFile(self.__filename)) > 0:
+			# rename current file to do backup
+			# that will move content too
+			os.rename(
+				self.__filename
+				, yesterdayFileName
+			)
 
-    def __dataFormat(self, content: Any) -> Any:
-        """
+	def __getContentFile(self, fileName: str) -> str:
+		"""
 
-        :param content:
-        :return:
-        """
-        if isinstance(content, dict):
-            return str(content)
+		:param fileName:
+		:return:
+		"""
+		try:
+			# init
+			content = ''
 
-        elif isinstance(content, str) or type(content) == str:
-            return content
+			# read file
+			with open(fileName) as f:
+				content = f.read()
 
-        else:
-            return ''
+			# final
+			return content
 
-    def __getContentFile(self, fileName: str) -> str:
-        """
+		except IOError:
+			return ''
 
-        :param fileName:
-        :return:
-        """
-        try:
-            with open(fileName) as f:
-                return f.readlines()
+		except Exception:
+			return ''
 
-        except IOError:
-            return ''
+	def __getStr(self, content: Any) -> str:
+		"""
 
-    def __setNewId(self, id: int) -> None:
-        """
+		:param content:
+		:return:
+		"""
+		if isinstance(content, dict):
+			return str(content)
 
-        :param id:
-        :return:
-        """
-        if id > Logger.id:
-            Logger.id   = id
+		elif isinstance(content, str) or type(content) == str:
+			return content
 
-    def __write(self, typeName: str = '', title: str = '', content: dict = {}, color: str = '', logId: int = None) -> None:
-        """
+		else:
+			return ''
 
-        :param typeName:
-        :param title:
-        :param content:
-        :param color:
-        :param logId:
-        :return:
-        """
-        # write log
-        if bool(self.__enableLog):
-            # create file
-            self.__createNewBackupFile()
+	def __setNewId(self, id: int) -> None:
+		"""
 
-            try:
-                # open log file, if not exist will create
-                with open(self.__filename, 'a+', encoding= 'utf-8') as f:
+		:param id:
+		:return:
+		"""
+		if id > Logger.id:
+			Logger.id   = id
 
-                    # validate log Id
-                    if logId:
-                        # Reset log id
-                        self.__setNewId(logId)
-                    else:
-                        # increase index first
-                        Logger.id += 1
+	def __write(self, typeName: str = '', title: str = '', color: str = '', content: dict = None, logId: int = None) -> None:
+		"""
 
-                    # do filter
-                    if Logger.id not in Logger.hide:
-                        # check color
-                        if self.__color:
-                            # generate content format with color
-                            tempContent = f"{self.__datetime} <{self.__keySeries}> <id: {Logger.id}>"\
-                                          f"{color}>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>{self.__style.ENDC}\n"\
-                                          f"[{typeName}] {self.__style.TEXT_BOLD}{title}{self.__style.ENDC} \n{self.__dataFormat(content)} \n{datetime.now().strftime(self.__dateTimeFormat)}"\
-                                          f"{color}<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<{self.__style.ENDC}\n\n\n"
+		:param typeName:
+		:param title:
+		:param content:
+		:param color:
+		:param logId:
+		:return:
+		"""
+		# create file
+		self.__createNewBackupFile()
 
-                            # output
-                            f.write(tempContent)
+		# validate log Id
+		if logId:
+			# Reset log id
+			self.__setNewId(logId)
 
-                            # verify first
-                            if self.__sessionKey:
-                                # output content to session's file
-                                self.__writeSession(tempContent)
+		else:
+			# increase index first
+			Logger.id += 1
 
-                            # clean
-                            tempContent = None
+		# do filter
+		if Logger.id not in Logger.hide:
+			# update content
+			contentBody = self.__getContentBody(typeName= typeName, title=title, content= self.__getStr(content= content), color= color)
+			contentHead = self.__getContentHead(logId= Logger.id)
 
-                        else:
-                            # generate content format without color
-                            tempContent = f"{self.__datetime} <{self.__keySeries}> <id: {Logger.id}>"\
-                                          f">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n"\
-                                          f"[{typeName}] {self.__style.TEXT_BOLD}{title}{self.__style.ENDC} \n{self.__dataFormat(content)} \n{datetime.now().strftime(self.__dateTimeFormat)} "\
-                                          f"<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\n\n\n"
+			# enable file log
+			if bool(self.__enableLog):
+				# write to file
+				self.__writeFile(content= f'{contentHead}{contentBody}')
 
-                            # output
-                            f.write(tempContent)
+				# verify first
+				if self.__sessionKey:
+					# output content to specific file via session's
+					self.__writeSessionFile(content= f'{contentHead}{contentBody}')
 
-                            # verify first and write if it attends
-                            if self.__sessionKey:
-                                # output content to session's file
-                                self.__writeSession(tempContent)
+			# enable console
+			if bool(self.__enableConsole):
+				# console
+				print(f'{contentHead}{contentBody}')
 
-                            # clean
-                            tempContent = None
+	def __getContentBody(self, typeName: str, title: str, content: str, color: str) -> str:
+		"""
 
-            except IOError as e:
-                print(f'Logger.__write output file IOError: open file {e.errno} {e.strerror}({self.__filename}), {str(e)}')
+		:param typeName:
+		:param title:
+		:param content:
+		:param color:
+		:return:
+		"""
+		lineStart   = ''
+		lineEnd     = ''
+		cHead       = ''
+		cBody       = f'[{typeName}] '
+		cFoot       = ''
 
-            except FileNotFoundError as e:
-                print(f'Logger.__write output file FileNotFoundError: open file {e.errno} {e.strerror}({self.__filename}), {str(e)}')
+		# add line to content
+		if bool(self.__line):
+			lineStart   = '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
+			lineEnd     = '<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<'
+			# update
+			cHead       = lineStart
+			cFoot       = lineEnd
 
-            except Exception as e:
-                print(f'Logger.__write output file Exception: open file {e.errno} {e.strerror}({self.__filename}), {str(e)}')
+		# add color, style
+		if bool(self.__color):
+			# update
+			cHead       = f'{color}{cHead}{self.__style.ENDC}'
+			cFoot       = f'{color}{cFoot}{self.__style.ENDC}'
+			cBody       = f'{color}{cBody}{self.__style.ENDC}{self.__style.TEXT_BOLD}{title}{self.__style.ENDC}'
 
-            # block redundancy
-            # print out
-            if bool(self.__enableConsole):
-                try:
-                    # do filter
-                    if Logger.id not in Logger.hide:
-                        if self.__color:
-                            # generate content format with color
-                            print(
-                                f"{self.__datetime} <{self.__keySeries}> <id: {Logger.id}>"
-                                f"{color}>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>{self.__style.ENDC}\n"
-                                f"[{typeName}] {self.__style.TEXT_BOLD}{title}{self.__style.ENDC} \n{self.__dataFormat(content)} \n{datetime.now().strftime(self.__dateTimeFormat)}"
-                                f"{color}<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<{self.__style.ENDC}\n\n\n"
-                            )
+		else:
+			cBody       = f'{cBody}{title}'
 
-                        else:
-                            # generate content format without color
-                            print(
-                                f"{self.__datetime} <{self.__keySeries}> <id: {Logger.id}>"
-                                f">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n"
-                                f"[{typeName}] {self.__style.TEXT_BOLD}{title}{self.__style.ENDC} \n{self.__dataFormat(content)} \n{datetime.now().strftime(self.__dateTimeFormat)} "
-                                f"<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\n\n\n"
-                            )
+		# final content
+		# f"{cBody}{self.__getStr(content)} \n{datetime.now().strftime(self.__dateTimeFormat)}" \
+		return f'\n{cHead}\n{cBody}{self.__getStr(content)} \n{cFoot}\n\n' if bool(self.__line) else f'\n{cBody}\n'
 
-                except Exception as e:
-                    print(f'Logger.__write print Exception: open file {e.errno} {e.strerror}({self.__filename}), {str(e)}')
+	def __getContentHead(self, logId: int) -> str:
+		"""
 
-    def __writeSession(self, content: Any) -> None:
-        """
+		:return:
+		"""
+		# final data
+		return f'{self.__datetime} <{self.__keySeries}> <id: {logId}>\n'
 
-        :param content:
-        :return:
-        """
-        try:
-            # open log file, if not exist will create
-            with open(self.__sessionKey + self.__extension, 'a+', encoding= 'utf-8') as fs:
-                fs.write(content)
+	def __writeFile(self, content: str) -> None:
+		"""
+		@note: final written file
+		:param content:
+		:return:
+		"""
+		try:
+			# open log file, if not exist will create
+			with open(self.__filename, 'a+', encoding= 'utf-8') as f:
+				f.write(content)
 
-        except IOError as e:
-            print(f'Logger.__writeSession output file IOError: open file {e.errno} {e.strerror}({self.__filename}), {str(e)}')
+		except FileNotFoundError as e:
+			print(f'Logger.__writeFile output file FileNotFoundError: open file {e.errno} {e.strerror}({self.__filename}), {str(e)}')
 
-        except FileNotFoundError as e:
-            print(f'Logger.__writeSession output file FileNotFoundError: open file {e.errno} {e.strerror}({self.__filename}), {str(e)}')
+		except IOError as e:
+			print(f'Logger.__writeFile output file IOError: open file {e.errno} {e.strerror}({self.__filename}), {str(e)}')
 
-        except Exception as e:
-            print(f'Logger.__writeSession output file Exception: open file {e.errno} {e.strerror}({self.__filename}), {str(e)}')
+		except Exception as e:
+			print(f'Logger.__writeFile output file Exception: open file({self.__filename}), {str(e)}')
 
-    def disable(self, numbers: list = []) -> None:
-        """
+	def __writeSessionFile(self, content: Any) -> None:
+		"""
 
-        :param numbers:
-        :return:
-        """
-        Logger.hide     = numbers
+		:param content:
+		:return:
+		"""
+		try:
+			# open log file, if not exist will create
+			with open(f'{self.__path}{self.__sessionKey}{self.__extension}', 'a+', encoding= 'utf-8') as fs:
+				fs.write(content)
 
-    def error(self, title: str = '', content: dict = {}, id: int = None) -> None:
-        """
+		except FileNotFoundError as e:
+			print(f'Logger.__writeSessionFile output file FileNotFoundError: open file {e.errno} {e.strerror}({self.__path}{self.__sessionKey}{self.__extension}), {str(e)}')
 
-        :param title:
-        :param content:
-        :param id:
-        :return:
-        """
-        if self.__color:
-            self.__write(
-                typeName= f'{self.__style.RED}ERROR{self.__style.ENDC}'
-                , title= f'{self.__style.RED}{title}{self.__style.ENDC}'
-                , content= content
-                , color= self.__style.RED
-                , logId= id
-            )
+		except IOError as e:
+			print(f'Logger.__writeSessionFile output file IOError: open file {e.errno} {e.strerror}({self.__path}{self.__sessionKey}{self.__extension}), {str(e)}')
 
-        else:
-            self.__write(
-                typeName= 'ERROR'
-                , title= title
-                , content= content
-                , color= self.__style.RED
-                , logId= id
-            )
+		except Exception as e:
+			print(f'Logger.__writeSessionFile output file Exception: open file ({self.__path}{self.__sessionKey}{self.__extension}), {str(e)}')
 
-    def fail(self, title: str = '', content: dict = {}, id: int = None) -> None:
-        """
+	def disableIds(self, numbers: list = None) -> None:
+		"""
 
-        :param title:
-        :param content:
-        :param id:
-        :return:
-        """
-        if self.__color:
-            self.__write(
-                typeName= f'{self.__style.MAGENTA}FAIL{self.__style.ENDC}'
-                , title= f'{self.__style.MAGENTA}{title}{self.__style.ENDC}'
-                , content= content
-                , color= self.__style.MAGENTA
-                , logId= id
-            )
+		:param numbers:
+		:return:
+		"""
+		if numbers:
+			Logger.hide     = numbers
 
-        else:
-            self.__write(
-                typeName= 'FAIL'
-                , title= title
-                , content= content
-                , color= self.__style.MAGENTA
-                , logId= id
-            )
+	def error(self, title: str = '', content: dict = None, id: int = None) -> None:
+		"""
 
-    def info(self, title: str = '', content: dict = {}, id: int = None) -> None:
-        """
+		:param title:
+		:param content:
+		:param id:
+		:return:
+		"""
+		self.__write(
+			typeName    = 'ERROR'
+			, title     = title
+			, content   = content if content else {}
+			, color     = self.__style.RED
+			, logId     = id
+		)
 
-        :param title:
-        :param content:
-        :param id:
-        :return:
-        """
-        if self.__color:
-            self.__write(
-                typeName= f'{self.__style.BLUE}INFO{self.__style.ENDC}'
-                , title= f'{self.__style.BLUE}{title}{self.__style.ENDC}'
-                , content= content
-                , color= self.__style.BLUE
-                , logId= id
-            )
+	def fail(self, title: str = '', content: dict = None, id: int = None) -> None:
+		"""
 
-        else:
-            self.__write(
-                typeName= 'INFO'
-                , title= title
-                , content= content
-                , color= self.__style.BLUE
-                , logId= id
-            )
+		:param title:
+		:param content:
+		:param id:
+		:return:
+		"""
 
-    def setKeySeries(self, series: str = None) -> None:
-        """
-        :param series:
-        :return:
-        """
-        if series:
-            self.__keySeries    = series
+		self.__write(
+			typeName    = 'FAIL'
+			, title     = title
+			, content   = content if content else {}
+			, color     = self.__style.MAGENTA
+			, logId     = id
+		)
 
-        else:
-            self.__keySeries    = ''
+	def info(self, title: str = '', content: dict = None, id: int = None) -> None:
+		"""
 
-    def setSessionKey(self, sessionKey: str) -> None:
-        """
+		:param title:
+		:param content:
+		:param id:
+		:return:
+		"""
+		self.__write(
+			typeName    = 'INFO'
+			, title     = title
+			, content   = content if content else {}
+			, color     = self.__style.BLUE
+			, logId     = id
+		)
 
-        :param sessionKey:
-        :return:
-        """
-        self.__sessionKey       = sessionKey
+	def setKeySeries(self, series: str = None) -> None:
+		"""
+		:param series:
+		:return:
+		"""
+		if series:
+			self.__keySeries    = series
 
-    def success(self, title: str = '', content: dict = {}, id: int = None) -> None:
-        """
-        :param title:
-        :param content:
-        :param id:
-        :return:
-        """
-        if self.__color:
-            self.__write(
-                typeName= f'{self.__style.GREEN}SUCCESS{self.__style.ENDC}'
-                , title= f'{self.__style.GREEN}{title}{self.__style.ENDC}'
-                , content= content
-                , color= self.__style.GREEN
-                , logId= id
-            )
+		else:
+			self.__keySeries    = ''
 
-        else:
-            self.__write(
-                typeName= 'INFO'
-                , title= title
-                , content= content
-                , color= self.__style.GREEN
-                , logId= id
-            )
+	def setSessionKey(self, sessionKey: str) -> None:
+		"""
 
-    def track(self, title: str = '', content: dict = {}, id: int = None) -> None:
-        """
-        :param title:
-        :param content:
-        :param id:
-        :return:
-        """
-        if self.__color:
-            self.__write(
-                typeName= 'TRACK'
-                , title= title
-                , content= content
-                , logId= id
-            )
+		:param sessionKey:
+		:return:
+		"""
+		self.__sessionKey       = sessionKey
 
-        else:
-            self.__write(
-                typeName= 'TRACK'
-                , title= title
-                , content= content
-                , logId= id
-            )
+	def success(self, title: str = '', content: dict = None, id: int = None) -> None:
+		"""
+		:param title:
+		:param content:
+		:param id:
+		:return:
+		"""
+		self.__write(
+			typeName    = 'SUCCESS'
+			, title     = title
+			, content   = content if content else {}
+			, color     = self.__style.GREEN
+			, logId     = id
+		)
 
-    def warning(self, title: str = '', content: dict = {}, id: int = None) -> None:
-        """
-        :param title:
-        :param content:
-        :param id:
-        :return:
-        """
-        if self.__color:
-            self.__write(
-                typeName= f'{self.__style.YELLOW}WARNING{self.__style.ENDC}'
-                , title= f'{self.__style.YELLOW}{title}{self.__style.ENDC}'
-                , content= content
-                , color= self.__style.YELLOW
-                , logId= id
-            )
+	def track(self, title: str = '', content: dict = None, id: int = None) -> None:
+		"""
+		:param title:
+		:param content:
+		:param id:
+		:return:
+		"""
+		self.__write(
+			typeName    = 'TRACK'
+			, title     = title
+			, content   = content
+			, logId     = id
+		)
 
-        else:
-            self.__write(
-                typeName= 'WARNING'
-                , title= title
-                , content= content
-                , color= self.__style.YELLOW
-                , logId= id
-            )
+	def warning(self, title: str = '', content: dict = None, id: int = None) -> None:
+		"""
+		:param title:
+		:param content:
+		:param id:
+		:return:
+		"""
+		self.__write(
+			typeName    = 'WARNING'
+			, title     = title
+			, content   = content if content else {}
+			, color     = self.__style.YELLOW
+			, logId     = id
+		)
 
-    class __StyleModifier:
-        # Foreground
-        BLUE            = '\033[94m'
-        BLACK           = '\033[90m'
-        CYAN            = '\033[96m'
-        GREEN           = '\033[92m'
-        GREY            = '\033[90m'
-        MAGENTA         = '\033[95m'
-        RED             = '\033[91m'
-        WHITE           = '\033[97m'
-        YELLOW          = '\033[93m'
-        # Text style
-        TEXT_BOLD       = '\033[1m'
-        TEXT_UNDERLINE  = '\033[4m'
-        # End up color
-        ENDC            = '\033[0m'
+	class __StyleModifier:
+		# Foreground
+		BLUE            = '\033[94m'
+		BLACK           = '\033[90m'
+		CYAN            = '\033[96m'
+		GREEN           = '\033[92m'
+		GREY            = '\033[90m'
+		MAGENTA         = '\033[95m'
+		RED             = '\033[91m'
+		WHITE           = '\033[97m'
+		YELLOW          = '\033[93m'
+		# Text style
+		TEXT_BOLD       = '\033[1m'
+		TEXT_UNDERLINE  = '\033[4m'
+		# End up color
+		ENDC            = '\033[0m'
