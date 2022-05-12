@@ -50,8 +50,6 @@ class Logger:
 		#
 		self.__keySeries        = ''
 		self.__datetime         = datetime.now().strftime(self.__dateTimeFormat)
-		# inner class
-		self.__style            = self.__StyleModifier()
 		# session as uuid or md5
 		self.__sessionKey       = ''
 
@@ -196,9 +194,9 @@ class Logger:
 		# add color, style
 		if bool(self.__color):
 			# update
-			cHead       = f'{color}{cHead}{self.__style.ENDC}'
-			cFoot       = f'{color}{cFoot}{self.__style.ENDC}'
-			cBody       = f'{color}{cBody}{self.__style.ENDC}{self.__style.TEXT_BOLD}{title}{self.__style.ENDC}'
+			cHead       = f'{color}{cHead}{self.__StyleModifier.ENDC}'
+			cFoot       = f'{color}{cFoot}{self.__StyleModifier.ENDC}'
+			cBody       = f'{color}{cBody}{self.__StyleModifier.ENDC}{self.__StyleModifier.TEXT_BOLD}{title}{self.__StyleModifier.ENDC}'
 
 		else:
 			cBody       = f'{cBody}{title}'
@@ -210,6 +208,7 @@ class Logger:
 	def __getContentHead(self, logId: int) -> str:
 		"""
 
+		:param logId:
 		:return:
 		"""
 		# final data
@@ -217,7 +216,8 @@ class Logger:
 
 	def __writeFile(self, content: str) -> None:
 		"""
-		@note: final written file
+
+		:note: final written file
 		:param content:
 		:return:
 		"""
@@ -276,7 +276,7 @@ class Logger:
 			typeName    = 'ERROR'
 			, title     = title
 			, content   = content if content else {}
-			, color     = self.__style.RED
+			, color     = self.__StyleModifier.RED
 			, logId     = id
 		)
 
@@ -293,7 +293,7 @@ class Logger:
 			typeName    = 'FAIL'
 			, title     = title
 			, content   = content if content else {}
-			, color     = self.__style.MAGENTA
+			, color     = self.__StyleModifier.MAGENTA
 			, logId     = id
 		)
 
@@ -309,12 +309,13 @@ class Logger:
 			typeName    = 'INFO'
 			, title     = title
 			, content   = content if content else {}
-			, color     = self.__style.BLUE
+			, color     = self.__StyleModifier.BLUE
 			, logId     = id
 		)
 
 	def setKeySeries(self, series: str = None) -> None:
 		"""
+
 		:param series:
 		:return:
 		"""
@@ -343,12 +344,13 @@ class Logger:
 			typeName    = 'SUCCESS'
 			, title     = title
 			, content   = content if content else {}
-			, color     = self.__style.GREEN
+			, color     = self.__StyleModifier.GREEN
 			, logId     = id
 		)
 
 	def track(self, title: str = '', content: dict = None, id: int = None) -> None:
 		"""
+
 		:param title:
 		:param content:
 		:param id:
@@ -363,6 +365,7 @@ class Logger:
 
 	def warning(self, title: str = '', content: dict = None, id: int = None) -> None:
 		"""
+		
 		:param title:
 		:param content:
 		:param id:
@@ -372,7 +375,7 @@ class Logger:
 			typeName    = 'WARNING'
 			, title     = title
 			, content   = content if content else {}
-			, color     = self.__style.YELLOW
+			, color     = self.__StyleModifier.YELLOW
 			, logId     = id
 		)
 
