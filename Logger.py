@@ -211,7 +211,7 @@ class Logger:
 		"""
 		# final data
 		if self.__keySeries:
-			return f'{self.__datetime} ({self.__keySeries}) <id: {logId}>\n'
+			return f'{self.__datetime} <id: {logId}> {self.__keySeries}\n'
 
 		else:
 			return f'{self.__datetime} <id: {logId}>\n'
