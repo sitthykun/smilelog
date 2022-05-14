@@ -188,4 +188,15 @@ _>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\
 2022-05-12 21:40:20.345 <id: 10>\
 [SUCCESS] **Success**\
 Hello String
-```
+
+## Pub/Sub
+### Redis
+- enableRedis:
+- setRedis
+  - enable: required
+  - host: required
+  - port: required
+  - channel: the default is None, scribe and publish
+  - db: by default is 0
+  - password: by default is None
+- 

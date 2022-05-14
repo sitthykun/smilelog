@@ -1,11 +1,14 @@
 """
 Author: masakokh
-Version: 3.2.0
+Version: 4.0.0
 """
 import datetime
 import os
 from datetime import datetime, timedelta
 from typing import Any
+# internal
+# from FCMLib import FCMLib
+from RedisLib import RedisLib
 
 
 class Logger:
@@ -38,8 +41,17 @@ class Logger:
 		self.__color            = color
 		self.__line             = line
 		# config
-		self.__enableLog        = enableLog
 		self.__enableConsole    = enableConsole
+		self.__enableLog        = enableLog
+		# redis
+		self.__enableRedis			= False
+		self.__enableRedisError		= False
+		self.__enableRedisFail		= False
+		self.__enableRedisInfo		= False
+		self.__enableRedisSuccess	= False
+		self.__enableRedisTrack		= False
+		self.__enableRedisWarning	= False
+		#
 		self.__extension        = extension
 		# path + /
 		self.__path             = path
@@ -51,6 +63,10 @@ class Logger:
 		self.__keySeries        = ''
 		# session as uuid or md5
 		self.__keySession       = ''
+		# pub/sub
+		# self.__fcm				= FCMLib()
+		self.__redis			= RedisLib()
+		# load
 
 	def __createNewBackupFile(self) -> None:
 		"""
@@ -165,6 +181,33 @@ class Logger:
 		else:
 			return ''
 
+	# def __pushFCM(self, title: str, body: str) -> None:
+	# 	"""
+	#
+	# 	:param title:
+	# 	:param body:
+	# 	:return:
+	# 	"""
+	# 	pass
+
+	async def __pushRedis(self, title: str, body: str, channel: str= None) -> None:
+		"""
+
+		:param title:
+		:param body:
+		:param channel:
+		:return:
+		"""
+		#
+		notification	= self.__redis.messagePush(
+			title		= title
+			, body		= body
+			, channel	= channel
+		)
+
+		#
+		print(notification)
+
 	def __setNewId(self, id: int) -> None:
 		"""
 
@@ -278,7 +321,7 @@ class Logger:
 		self.__write(
 			typeName    = 'ERROR'
 			, title     = title
-			, content   = content if content else {}
+			, content   = content
 			, color     = self.__StyleModifier.RED
 			, logId     = id
 		)
@@ -291,14 +334,21 @@ class Logger:
 		:param id:
 		:return:
 		"""
-
 		self.__write(
 			typeName    = 'FAIL'
 			, title     = title
-			, content   = content if content else {}
+			, content   = content
 			, color     = self.__StyleModifier.MAGENTA
 			, logId     = id
 		)
+
+		#
+		if self.__enableRedis and self.__redis.enableFail:
+			#
+			self.__redis.messagePush(
+				title	= title
+				, body	= content
+			)
 
 	def info(self, title: str = '', content: dict = None, id: int = None) -> None:
 		"""
@@ -311,10 +361,26 @@ class Logger:
 		self.__write(
 			typeName    = 'INFO'
 			, title     = title
-			, content   = content if content else {}
+			, content   = content
 			, color     = self.__StyleModifier.BLUE
 			, logId     = id
 		)
+
+		#
+		if self.__enableRedis and self.__redis.enableInfo:
+			#
+			self.__redis.messagePush(
+				title	= title
+				, body	= content
+			)
+
+	# def setFCM(self, config: dict) -> None:
+	# 	"""
+	#
+	# 	:param config:
+	# 	:return:
+	# 	"""
+	# 	self.__fcm.setConfig(config)
 
 	def setKeySeries(self, series: str = None) -> None:
 		"""
@@ -327,15 +393,50 @@ class Logger:
 	def setKeySession(self, sessionKey: str= None) -> None:
 		"""
 
+		:note: set session filename
 		:param sessionKey:
 		:return:
 		"""
 		if sessionKey and len(sessionKey) > 32:
+			# start 0 to 31st of string
 			self.__keySession       = sessionKey[0:31]
 
 		else:
 			# accept even empty or none
+			# empty or none won't able this feature
 			self.__keySession       = sessionKey
+
+	def setRedis(self, enable: bool, host: str, port: int, db: int= 0, password: str= None, enableFail: bool= False, enableInfo: bool= False, enableTrack: bool= False, enableSuccess: bool= False, enableWarning: bool= False, channel: str= None) -> None:
+		"""
+
+		:param enable:
+		:param host:
+		:param port:
+		:param db:
+		:param password:
+		:param channel:
+		:return:
+		"""
+		# assign value
+		self.__enableRedis		= enable
+
+		# config the redis property to connect to the server
+		self.__redis.config(
+			host		= host
+			, port		= port
+			, db		= db
+			, password	= password
+		)
+
+		# enable level of pub/sub
+		self.__redis.enableFail		= enableFail
+		self.__redis.enableInfo		= enableInfo
+		self.__redis.enableTrack	= enableTrack
+		self.__redis.enableSuccess	= enableSuccess
+		self.__redis.enableWarning	= enableWarning
+
+		# set channel name
+		self.__redis.channelSet(channel= channel)
 
 	def success(self, title: str = '', content: dict = None, id: int = None) -> None:
 		"""
@@ -347,10 +448,18 @@ class Logger:
 		self.__write(
 			typeName    = 'SUCCESS'
 			, title     = title
-			, content   = content if content else {}
+			, content   = content
 			, color     = self.__StyleModifier.GREEN
 			, logId     = id
 		)
+
+		#
+		if self.__enableRedis and self.__redis.enableSuccess:
+			#
+			self.__redis.messagePush(
+				title	= title
+				, body	= content
+			)
 
 	def track(self, title: str = '', content: dict = None, id: int = None) -> None:
 		"""
@@ -367,6 +476,14 @@ class Logger:
 			, logId     = id
 		)
 
+		#
+		if self.__enableRedis and self.__redis.enableTrack:
+			#
+			self.__redis.messagePush(
+				title	= title
+				, body	= content
+			)
+
 	def warning(self, title: str = '', content: dict = None, id: int = None) -> None:
 		"""
 
@@ -378,10 +495,18 @@ class Logger:
 		self.__write(
 			typeName    = 'WARNING'
 			, title     = title
-			, content   = content if content else {}
+			, content   = content
 			, color     = self.__StyleModifier.YELLOW
 			, logId     = id
 		)
+
+		#
+		if self.__enableRedis and self.__redis.enableWarning:
+			#
+			self.__redis.messagePush(
+				title	= title
+				, body	= content
+			)
 
 	class __StyleModifier:
 		# Foreground
