@@ -20,7 +20,7 @@ class Logger:
 	# index of output
 	id      = 0
 
-	def __init__(self, path: str, filename: str, extension: str, enableLog: bool= True, enableConsole: bool= True, line: bool= True, color: bool= True):
+	def __init__(self, path: str= 'log', filename: str= 'access', extension: str= '.log', enableLog: bool= True, enableConsole: bool= True, line: bool= True, color: bool= True):
 		"""
 
 		:param path:
@@ -56,7 +56,7 @@ class Logger:
 		# path + /
 		self.__path             = path
 		# compute
-		self.__filename         = f'{self.__path}{filename}{self.__extension}'
+		self.__filename         = os.path.join(self.__path, f'{filename}{self.__extension}')
 		# static datetime
 		self.__datetime         = datetime.now().strftime(self.__dateTimeFormat)
 		# series
@@ -180,6 +180,14 @@ class Logger:
 
 		else:
 			return ''
+
+	async def __msgRedis(self, channel: str= None) -> None:
+		"""
+
+		:param channel:
+		:return:
+		"""
+		self.__redis.messageGet()
 
 	# def __pushFCM(self, title: str, body: str) -> None:
 	# 	"""
