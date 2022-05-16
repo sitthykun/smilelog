@@ -93,7 +93,7 @@ class Logger:
 		# generate a filename
 		return f'{self.__path}{(datetime.now() - timedelta(1)).strftime(self.__formatFileName)}{self.__extension}'
 
-	def __getContentBody(self, typeName: str, title: str, content: str, color: str) -> str:
+	def __getContentBody(self, typeName: str, title: str, content: Any, color: str) -> str:
 		"""
 
 		:param typeName:
@@ -225,7 +225,7 @@ class Logger:
 		if id > Logger.id:
 			Logger.id   = id
 
-	def __write(self, typeName: str = '', title: str = '', color: str = '', content: dict = None, logId: int = None) -> None:
+	def __write(self, typeName: str = '', title: str = '', color: str = '', content: Any = None, logId: int = None) -> None:
 		"""
 
 		:param typeName:
@@ -318,7 +318,7 @@ class Logger:
 		if numbers:
 			Logger.hide     = numbers
 
-	def error(self, title: str = '', content: dict = None, id: int = None) -> None:
+	def error(self, title: str = '', content: Any = None, id: int = None) -> None:
 		"""
 
 		:param title:
@@ -334,7 +334,7 @@ class Logger:
 			, logId     = id
 		)
 
-	def fail(self, title: str = '', content: dict = None, id: int = None) -> None:
+	def fail(self, title: str = '', content: Any= None, id: int = None) -> None:
 		"""
 
 		:param title:
@@ -358,7 +358,7 @@ class Logger:
 				, body	= content
 			)
 
-	def info(self, title: str = '', content: dict = None, id: int = None) -> None:
+	def info(self, title: str = '', content: Any = None, id: int = None) -> None:
 		"""
 
 		:param title:
@@ -446,7 +446,7 @@ class Logger:
 		# set channel name
 		self.__redis.channelSet(channel= channel)
 
-	def success(self, title: str = '', content: dict = None, id: int = None) -> None:
+	def success(self, title: str = '', content: Any = None, id: int = None) -> None:
 		"""
 		:param title:
 		:param content:
@@ -469,7 +469,7 @@ class Logger:
 				, body	= content
 			)
 
-	def track(self, title: str = '', content: dict = None, id: int = None) -> None:
+	def track(self, title: str = '', content: Any = None, id: int = None) -> None:
 		"""
 
 		:param title:
@@ -492,7 +492,7 @@ class Logger:
 				, body	= content
 			)
 
-	def warning(self, title: str = '', content: dict = None, id: int = None) -> None:
+	def warning(self, title: str = '', content: Any = None, id: int = None) -> None:
 		"""
 
 		:param title:
