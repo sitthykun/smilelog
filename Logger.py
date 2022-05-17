@@ -20,7 +20,7 @@ class Logger:
 	# index of output
 	id      = 0
 
-	def __init__(self, path: str= 'log', filename: str= 'access', extension: str= '.log', enableLog: bool= True, enableConsole: bool= True, line: bool= True, color: bool= True):
+	def __init__(self, path: str = 'log', filename: str = 'access', extension: str = '.log', enableLog: bool = True, enableConsole: bool = True, line: bool = True, color: bool = True):
 		"""
 
 		:param path:
@@ -206,7 +206,7 @@ class Logger:
 	# 	"""
 	# 	pass
 
-	async def __pushRedis(self, isEnabled: bool, title: str, content: str, channel: str= None) -> None:
+	async def __pushRedis(self, isEnabled: bool, title: str, content: str, channel: str = None) -> None:
 		"""
 
 		:param isEnabled:
@@ -328,7 +328,7 @@ class Logger:
 		if numbers:
 			Logger.hide     = numbers
 
-	def error(self, title: str = '', content: Any = None, id: int = None, channel: str= None) -> None:
+	def error(self, title: str = '', content: Any = None, id: int = None, channel: str = None) -> None:
 		"""
 
 		:param title:
@@ -420,7 +420,7 @@ class Logger:
 		"""
 		self.__keySeries    = series
 
-	def setKeySession(self, sessionKey: str= None) -> None:
+	def setKeySession(self, sessionKey: str = None) -> None:
 		"""
 
 		:note: set session filename
@@ -436,7 +436,7 @@ class Logger:
 			# empty or none won't able this feature
 			self.__keySession       = sessionKey
 
-	def setRedis(self, enable: bool, host: str, port: int, db: int= 0, password: str= None, enableFail: bool= False, enableInfo: bool= False, enableTrack: bool= False, enableSuccess: bool= False, enableWarning: bool= False, channel: str= None) -> None:
+	def setRedis(self, enable: bool, host: str, port: int, db: int = 0, password: str = None, enableFail: bool = False, enableInfo: bool = False, enableTrack: bool = False, enableSuccess: bool = False, enableWarning: bool = False, channel: str = None) -> None:
 		"""
 
 		:param enable:
