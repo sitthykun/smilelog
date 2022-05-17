@@ -21,6 +21,7 @@ class RedisLib:
 		self.__pubsub		= None
 		self.__redis		= None
 		# public
+		self.enableError	= False
 		self.enableFail		= False
 		self.enableInfo		= False
 		self.enableTrack	= False

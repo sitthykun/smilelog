@@ -181,6 +181,14 @@ class Logger:
 		else:
 			return ''
 
+	def __isEnabledRedis(self, level: bool) -> bool:
+		"""
+
+		:param level:
+		:return:
+		"""
+		return self.__enableRedis and level
+
 	async def __msgRedis(self, channel: str= None) -> None:
 		"""
 
@@ -334,6 +342,14 @@ class Logger:
 			, logId     = id
 		)
 
+		#
+		if self.__isEnabledRedis(self.__redis.enableError):
+			#
+			self.__redis.messagePush(
+				title	= title
+				, body	= content
+			)
+
 	def fail(self, title: str = '', content: Any= None, id: int = None) -> None:
 		"""
 
@@ -351,7 +367,7 @@ class Logger:
 		)
 
 		#
-		if self.__enableRedis and self.__redis.enableFail:
+		if self.__isEnabledRedis(self.__redis.enableFail):
 			#
 			self.__redis.messagePush(
 				title	= title
@@ -375,7 +391,7 @@ class Logger:
 		)
 
 		#
-		if self.__enableRedis and self.__redis.enableInfo:
+		if self.__isEnabledRedis(self.__redis.enableInfo):
 			#
 			self.__redis.messagePush(
 				title	= title
@@ -462,7 +478,7 @@ class Logger:
 		)
 
 		#
-		if self.__enableRedis and self.__redis.enableSuccess:
+		if self.__isEnabledRedis(self.__redis.enableSuccess):
 			#
 			self.__redis.messagePush(
 				title	= title
@@ -485,7 +501,7 @@ class Logger:
 		)
 
 		#
-		if self.__enableRedis and self.__redis.enableTrack:
+		if self.__isEnabledRedis(self.__redis.enableTrack):
 			#
 			self.__redis.messagePush(
 				title	= title
@@ -509,7 +525,7 @@ class Logger:
 		)
 
 		#
-		if self.__enableRedis and self.__redis.enableWarning:
+		if self.__isEnabledRedis(self.__redis.enableWarning):
 			#
 			self.__redis.messagePush(
 				title	= title
