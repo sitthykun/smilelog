@@ -181,13 +181,13 @@ class Logger:
 		else:
 			return ''
 
-	def __isEnabledRedis(self, level: bool) -> bool:
+	def __isEnabledRedis(self, enabledLevel: bool) -> bool:
 		"""
 
-		:param level:
+		:param enabledLevel:
 		:return:
 		"""
-		return self.__enableRedis and level
+		return self.__enableRedis and enabledLevel
 
 	async def __msgRedis(self, channel: str= None) -> None:
 		"""
@@ -195,7 +195,7 @@ class Logger:
 		:param channel:
 		:return:
 		"""
-		self.__redis.messageGet()
+		self.__redis.messageGet(channel)
 
 	# def __pushFCM(self, title: str, body: str) -> None:
 	# 	"""
@@ -206,23 +206,25 @@ class Logger:
 	# 	"""
 	# 	pass
 
-	async def __pushRedis(self, title: str, body: str, channel: str= None) -> None:
+	async def __pushRedis(self, isEnabled: bool, title: str, content: str, channel: str= None) -> None:
 		"""
 
+		:param isEnabled:
 		:param title:
-		:param body:
+		:param content:
 		:param channel:
 		:return:
 		"""
-		#
-		notification	= self.__redis.messagePush(
-			title		= title
-			, body		= body
-			, channel	= channel
-		)
+		if self.__isEnabledRedis(enabledLevel= isEnabled):
+			#
+			notification	= self.__redis.messagePush(
+				title		= title
+				, body		= content
+				, channel	= channel
+			)
 
-		#
-		print(notification)
+			#
+			print(notification)
 
 	def __setNewId(self, id: int) -> None:
 		"""
@@ -258,7 +260,7 @@ class Logger:
 		# do filter
 		if Logger.id not in Logger.hide:
 			# update content
-			contentBody = self.__getContentBody(typeName= typeName, title= title, content= self.__getStr(content= content), color= color)
+			contentBody = self.__getContentBody(typeName= typeName.upper(), title= title, content= self.__getStr(content= content), color= color)
 			contentHead = self.__getContentHead(logId= Logger.id)
 
 			# enable file log
@@ -326,12 +328,13 @@ class Logger:
 		if numbers:
 			Logger.hide     = numbers
 
-	def error(self, title: str = '', content: Any = None, id: int = None) -> None:
+	def error(self, title: str = '', content: Any = None, id: int = None, channel: str= None) -> None:
 		"""
 
 		:param title:
 		:param content:
 		:param id:
+		:param channel:
 		:return:
 		"""
 		self.__write(
@@ -343,19 +346,20 @@ class Logger:
 		)
 
 		#
-		if self.__isEnabledRedis(self.__redis.enableError):
-			#
-			self.__redis.messagePush(
-				title	= title
-				, body	= content
-			)
+		self.__pushRedis(
+			isEnabled	= self.__redis.enableError
+			, title		= title
+			, content	= content
+			, channel	= channel
+		)
 
-	def fail(self, title: str = '', content: Any= None, id: int = None) -> None:
+	def fail(self, title: str = '', content: Any = None, id: int = None, channel: str = None) -> None:
 		"""
 
 		:param title:
 		:param content:
 		:param id:
+		:param channel:
 		:return:
 		"""
 		self.__write(
@@ -367,21 +371,23 @@ class Logger:
 		)
 
 		#
-		if self.__isEnabledRedis(self.__redis.enableFail):
-			#
-			self.__redis.messagePush(
-				title	= title
-				, body	= content
-			)
+		self.__pushRedis(
+			isEnabled	= self.__redis.enableFail
+			, title		= title
+			, content	= content
+			, channel	= channel
+		)
 
-	def info(self, title: str = '', content: Any = None, id: int = None) -> None:
+	def info(self, title: str = '', content: Any = None, id: int = None, channel: str = None) -> None:
 		"""
 
 		:param title:
 		:param content:
 		:param id:
+		:param channel:
 		:return:
 		"""
+
 		self.__write(
 			typeName    = 'INFO'
 			, title     = title
@@ -391,12 +397,12 @@ class Logger:
 		)
 
 		#
-		if self.__isEnabledRedis(self.__redis.enableInfo):
-			#
-			self.__redis.messagePush(
-				title	= title
-				, body	= content
-			)
+		self.__pushRedis(
+			isEnabled	= self.__redis.enableInfo
+			, title		= title
+			, content	= content
+			, channel	= channel
+		)
 
 	# def setFCM(self, config: dict) -> None:
 	# 	"""
@@ -462,11 +468,13 @@ class Logger:
 		# set channel name
 		self.__redis.channelSet(channel= channel)
 
-	def success(self, title: str = '', content: Any = None, id: int = None) -> None:
+	def success(self, title: str = '', content: Any = None, id: int = None, channel: str = None) -> None:
 		"""
+
 		:param title:
 		:param content:
 		:param id:
+		:param channel:
 		:return:
 		"""
 		self.__write(
@@ -478,19 +486,20 @@ class Logger:
 		)
 
 		#
-		if self.__isEnabledRedis(self.__redis.enableSuccess):
-			#
-			self.__redis.messagePush(
-				title	= title
-				, body	= content
-			)
+		self.__pushRedis(
+			isEnabled	= self.__redis.enableSuccess
+			, title		= title
+			, content	= content
+			, channel	= channel
+		)
 
-	def track(self, title: str = '', content: Any = None, id: int = None) -> None:
+	def track(self, title: str = '', content: Any = None, id: int = None, channel: str = None) -> None:
 		"""
 
 		:param title:
 		:param content:
 		:param id:
+		:param channel:
 		:return:
 		"""
 		self.__write(
@@ -501,19 +510,20 @@ class Logger:
 		)
 
 		#
-		if self.__isEnabledRedis(self.__redis.enableTrack):
-			#
-			self.__redis.messagePush(
-				title	= title
-				, body	= content
-			)
+		self.__pushRedis(
+			isEnabled	= self.__redis.enableTrack
+			, title		= title
+			, content	= content
+			, channel	= channel
+		)
 
-	def warning(self, title: str = '', content: Any = None, id: int = None) -> None:
+	def warning(self, title: str = '', content: Any = None, id: int = None, channel: str = None) -> None:
 		"""
 
 		:param title:
 		:param content:
 		:param id:
+		:param channel:
 		:return:
 		"""
 		self.__write(
@@ -525,12 +535,12 @@ class Logger:
 		)
 
 		#
-		if self.__isEnabledRedis(self.__redis.enableWarning):
-			#
-			self.__redis.messagePush(
-				title	= title
-				, body	= content
-			)
+		self.__pushRedis(
+			isEnabled	= self.__redis.enableWarning
+			, title		= title
+			, content	= content
+			, channel	= channel
+		)
 
 	class __StyleModifier:
 		# Foreground

@@ -1,7 +1,7 @@
 """
 Author: masakokh
 Note: redis
-Version: 1.0.0
+Version: 1.0.1
 """
 #
 import redis
@@ -18,6 +18,7 @@ class RedisLib:
 
 		"""
 		# private
+		self.__channel		= None
 		self.__pubsub		= None
 		self.__redis		= None
 		# public
@@ -49,7 +50,10 @@ class RedisLib:
 		try:
 			# verify data
 			if channel:
-				self.__pubsub.subscribe(channel)
+				# set current channel
+				self.__channel	= channel
+				# subscribe new channel
+				self.__pubsub.subscribe(self.__channel)
 
 		except Exception as e:
 			print(str(e))
@@ -118,18 +122,23 @@ class RedisLib:
 		except Exception as e:
 			print(str(e))
 
-	def messageGet(self) -> Any:
+	def messageGet(self, channel: str= None) -> Any:
 		"""
 
+		:param channel:
 		:return:
 		"""
 		try:
+			#
+			if channel:
+				pass
+			#
 			self.__pubsub.get_message()
 
 		except Exception as e:
 			print(str(e))
 
-	async def messagePush(self, title: str, body: str, channel: str) -> bool:
+	async def messagePush(self, title: str, body: str, channel: str= None) -> bool:
 		"""
 
 		:param title:
@@ -138,12 +147,32 @@ class RedisLib:
 		:return:
 		"""
 		try:
-			self.__pubsub.publish(
-				channel
-				, f'{title}:::{body}'
-			)
 			#
-			return True
+			message	= f'{title}:::{body}'
+
+			#
+			if channel:
+				#
+				self.__pubsub.publish(
+					channel
+					, message
+				)
+
+				#
+				return True
+
+			elif self.__channel:
+				#
+				self.__pubsub.publish(
+					self.__channel
+					, message
+				)
+
+				#
+				return False
+
+			#
+			return False
 
 		except Exception as e:
 			print(str(e))
