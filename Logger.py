@@ -462,7 +462,7 @@ class Logger:
 		)
 
 		# enable level of pub/sub
-		self.__enableRedisError		= enableError
+		self.__redis.enableError	= enableError
 		self.__redis.enableFail		= enableFail
 		self.__redis.enableInfo		= enableInfo
 		self.__redis.enableTrack	= enableTrack
