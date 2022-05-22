@@ -19,6 +19,7 @@ class RedisLib:
 		"""
 		# private
 		self.__channel		= None
+		self.__pool			= None
 		self.__pubsub		= None
 		self.__redis		= None
 		# public
@@ -36,6 +37,7 @@ class RedisLib:
 		:return:
 		"""
 		try:
+			#
 			self.__pubsub.unsubscribe(channel)
 
 		except Exception as e:
@@ -52,13 +54,14 @@ class RedisLib:
 			if channel:
 				# set current channel
 				self.__channel	= channel
+
 				# subscribe new channel
 				self.__pubsub.subscribe(self.__channel)
 
 		except Exception as e:
 			print(str(e))
 
-	def config(self, host: str, port: int, db: int= 0, password: str= None) -> None:
+	def config(self, host: str, port: int, db: int = 0, password: str = None) -> None:
 		"""
 
 		:param host:
@@ -70,28 +73,41 @@ class RedisLib:
 		#
 		try:
 			if password:
-				#
-				self.__redis	= redis.Redis(
+				# pool
+				self.__pool		= redis.ConnectionPool(
 					host				= host
 					, port				= port
 					, db				= db
 					, decode_responses	= True
-					, encoding			= 'utf-8'
+					, charset			= 'utf-8'
 					, password			= password
 				)
 
-			else:
 				#
 				self.__redis	= redis.Redis(
+					connection_pool		= self.__pool
+				)
+
+				#
+				self.__pubsub	= self.__redis.pubsub()
+
+			else:
+				#
+				self.__redis	= redis.ConnectionPool(
 					host				= host
 					, port				= port
 					, db				= db
 					, decode_responses	= True
-					, encoding			= 'utf-8'
+					, charset			= 'utf-8'
 				)
 
-			# set pubsub
-			self.__pubsub	= self.__redis.pubsub()
+				#
+				self.__redis	= redis.Redis(
+					connection_pool		= self.__pool
+				)
+
+				#
+				self.__pubsub	= self.__redis.pubsub()
 
 		except Exception as e:
 			print(f'{str(e)}')
@@ -138,7 +154,7 @@ class RedisLib:
 		except Exception as e:
 			print(str(e))
 
-	async def messagePush(self, title: str, body: str, channel: str= None) -> bool:
+	def messagePush(self, title: str, body: str, channel: str = None) -> None:
 		"""
 
 		:param title:
@@ -153,28 +169,17 @@ class RedisLib:
 			#
 			if channel:
 				#
-				self.__pubsub.publish(
+				self.__redis.publish(
 					channel
 					, message
 				)
 
-				#
-				return True
-
 			elif self.__channel:
 				#
-				self.__pubsub.publish(
+				self.__redis.publish(
 					self.__channel
 					, message
 				)
 
-				#
-				return False
-
-			#
-			return False
-
 		except Exception as e:
 			print(str(e))
-			#
-			return False

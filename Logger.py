@@ -33,16 +33,16 @@ class Logger:
 		"""
 		# datetime format
 		# ex: 2020-05-18
-		self.__formatFileName   = '%Y-%m-%d'
+		self.__formatFileName   	= '%Y-%m-%d'
 		# full datetime format
 		# ex: 2022-05-12 21:40:20.345
-		self.__dateTimeFormat   = f'{self.__formatFileName} %H:%M:%S.%f'
+		self.__dateTimeFormat   	= f'{self.__formatFileName} %H:%M:%S'
 		# set color
-		self.__color            = color
-		self.__line             = line
+		self.__color            	= color
+		self.__line             	= line
 		# config
-		self.__enableConsole    = enableConsole
-		self.__enableLog        = enableLog
+		self.__enableConsole    	= enableConsole
+		self.__enableLog        	= enableLog
 		# redis
 		self.__enableRedis			= False
 		self.__enableRedisError		= False
@@ -52,20 +52,20 @@ class Logger:
 		self.__enableRedisTrack		= False
 		self.__enableRedisWarning	= False
 		#
-		self.__extension        = extension
+		self.__extension        	= extension
 		# path + /
-		self.__path             = path
+		self.__path            		= path
 		# compute
-		self.__filename         = os.path.join(self.__path, f'{filename}{self.__extension}')
+		self.__filename         	= os.path.join(self.__path, f'{filename}{self.__extension}')
 		# static datetime
-		self.__datetime         = datetime.now().strftime(self.__dateTimeFormat)
+		self.__datetime         	= datetime.now().strftime(self.__dateTimeFormat)
 		# series
-		self.__keySeries        = ''
+		self.__keySeries        	= ''
 		# session as uuid or md5
-		self.__keySession       = ''
+		self.__keySession       	= ''
 		# pub/sub
 		# self.__fcm				= FCMLib()
-		self.__redis			= RedisLib()
+		self.__redis				= RedisLib()
 		# load
 
 	def __createNewBackupFile(self) -> None:
@@ -91,7 +91,7 @@ class Logger:
 		:return:
 		"""
 		# generate a filename
-		return f'{self.__path}{(datetime.now() - timedelta(1)).strftime(self.__formatFileName)}{self.__extension}'
+		return os.path.join(self.__path, f'{(datetime.now() - timedelta(1)).strftime(self.__formatFileName)}{self.__extension}')
 
 	def __getContentBody(self, typeName: str, title: str, content: Any, color: str) -> str:
 		"""
@@ -104,9 +104,9 @@ class Logger:
 		"""
 		lineStart   = ''
 		lineEnd     = ''
-		cHead       = ''
 		cBody       = f'[{typeName}] '
 		cFoot       = ''
+		cHead       = ''
 
 		# add line to content
 		if bool(self.__line):
@@ -189,7 +189,7 @@ class Logger:
 		"""
 		return self.__enableRedis and enabledLevel
 
-	async def __msgRedis(self, channel: str= None) -> None:
+	def __msgRedis(self, channel: str= None) -> None:
 		"""
 
 		:param channel:
@@ -206,7 +206,7 @@ class Logger:
 	# 	"""
 	# 	pass
 
-	async def __pushRedis(self, isEnabled: bool, title: str, content: str, channel: str = None) -> None:
+	def __pushRedis(self, isEnabled: bool, title: str, content: str, channel: str = None) -> None:
 		"""
 
 		:param isEnabled:
@@ -217,14 +217,11 @@ class Logger:
 		"""
 		if self.__isEnabledRedis(enabledLevel= isEnabled):
 			#
-			notification	= self.__redis.messagePush(
+			self.__redis.messagePush(
 				title		= title
 				, body		= content
 				, channel	= channel
 			)
-
-			#
-			print(notification)
 
 	def __setNewId(self, id: int) -> None:
 		"""
@@ -266,17 +263,17 @@ class Logger:
 			# enable file log
 			if bool(self.__enableLog):
 				# write to file
-				self.__writeFile(content= f'{contentHead}{contentBody}')
+				self.__writeFile(content= f'{contentHead}\n{contentBody}')
 
 				# verify first
 				if self.__keySession:
 					# output content to specific file via session's
-					self.__writeSessionFile(content= f'{contentHead}{contentBody}')
+					self.__writeSessionFile(content= f'{contentHead}\n{contentBody}')
 
 			# enable console
 			if bool(self.__enableConsole):
 				# console
-				print(f'{contentHead}{contentBody}')
+				print(f'{contentHead}\n{contentBody}')
 
 	def __writeFile(self, content: str) -> None:
 		"""
@@ -436,7 +433,7 @@ class Logger:
 			# empty or none won't able this feature
 			self.__keySession       = sessionKey
 
-	def setRedis(self, enable: bool, host: str, port: int, db: int = 0, password: str = None, enableFail: bool = False, enableInfo: bool = False, enableTrack: bool = False, enableSuccess: bool = False, enableWarning: bool = False, channel: str = None) -> None:
+	def setRedis(self, enable: bool, host: str, port: int, db: int = 0, password: str = None, enableError: bool = False, enableFail: bool = False, enableInfo: bool = False, enableTrack: bool = False, enableSuccess: bool = False, enableWarning: bool = False, channel: str = None) -> None:
 		"""
 
 		:param enable:
@@ -444,6 +441,12 @@ class Logger:
 		:param port:
 		:param db:
 		:param password:
+		:param enableError:
+		:param enableFail:
+		:param enableInfo:
+		:param enableTrack:
+		:param enableSuccess:
+		:param enableWarning:
 		:param channel:
 		:return:
 		"""
@@ -459,6 +462,7 @@ class Logger:
 		)
 
 		# enable level of pub/sub
+		self.__enableRedisError		= enableError
 		self.__redis.enableFail		= enableFail
 		self.__redis.enableInfo		= enableInfo
 		self.__redis.enableTrack	= enableTrack
