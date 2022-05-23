@@ -2,7 +2,7 @@
 ![smilelog](https://user-images.githubusercontent.com/227092/76993446-6e44ff00-697f-11ea-9aed-970b8fa0e126.png)
 **SmileLog 4.0.0** is a brilliant version which work with redis pubsub.\
 What 's new.
-- Log a static file
+- Log to a static file
 - Backup file everyday
 - Enable series of log session
 - Parallel log between static log and session log
@@ -11,7 +11,7 @@ What 's new.
   - on or off
   - editable line character
   - editable number of line character
-- Fix bug
+- Fix bugs
 - Improve performance
 - Clean up code
 
