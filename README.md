@@ -1,8 +1,19 @@
 # SmileLog
 ![smilelog](https://user-images.githubusercontent.com/227092/76993446-6e44ff00-697f-11ea-9aed-970b8fa0e126.png)
-**SmileLog 3.1** is a brilliant version.
-- tail -f access.log
-- Separating log file by session key
+**SmileLog 4.0.0** is a brilliant version which work with redis pubsub.\
+What 's new.
+- Log a static file
+- Backup file everyday
+- Enable series of log session
+- Parallel log between static log and session log
+- Push any log to redis via pubsub method
+- Dynamic line separation
+  - on or off
+  - editable line character
+  - editable number of line character
+- Fix bug
+- Improve performance
+- Clean up code
 
 It's going to change the traditional tracing in another way.\
 What will it assist us:
@@ -28,12 +39,12 @@ To Support my work, please donate me via <a class="bmc-button" target="_blank" h
 
 ### 5 Methods
 Use in the different situation, and show up in different color
-1. track: track(title, content, id= None)
-2. information: info(title, content, id= None)
-3. success: success(title, content, id= None)
-4. warning: warning(title, content, id= None)
-5. error: error(title, content, id= None)
-6. fail: fail(title, content, id= None)
+1. error: error(title, content, id= None, channel= None)
+2. fail: fail(title, content, id= None, channel= None)
+3. information: info(title, content, id= None, channel= None)
+4. success: success(title, content, id= None, channel= None)
+5. track: track(title, content, id= None, channel= None)
+6. warning: warning(title, content, id= None, channel= None)
 ```
 - title is a string
 - content can be a string or dict
@@ -60,8 +71,8 @@ log.info(
 
 # success method
 log.success(
-	'My Success Title'
-	, 'My String'
+	title	 	= 'My Success Title'
+	, content	= 'My String'
 )
 
 # setKeySeries is a new method to indicate to the token of a long message
@@ -75,13 +86,16 @@ Let's Look at its configure would explain more:
 
 ```
 log	= Logger(
-            path: str, 
-            filename: str, 
-            extension: str,  
-            enableLog: bool= True,
-            enableConsole: bool= True,
-            line: bool= True
-            color: bool= True
+           path: 				str	= 'log'
+           , filename: 			str = 'access'
+           , extension: 		str = 'log'  
+            , enableLog: 		bool= True
+            , enableConsole: 	bool= True
+            , line: 			bool= True
+            , charInLine: 		int	= 55
+            , lineCharStart: 	str = '>'
+            , lineCharEnd: 		str = '<',
+            , color: 			bool= True
 	)
 ```
 - **path**: is a directory
@@ -190,8 +204,16 @@ _>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\
 Hello String
 
 ## Pub/Sub
-### Redis
-- enableRedis:
+### enable Redis Engine
+- enableRedis: bool
+#### enable any functional alert
+- enableError: bool
+- enableFail: bool
+- enableInfo: bool
+- enableTrack: bool
+- enableSuccess: bool
+- enableWarning: bool
+#### initializes redis requirement
 - setRedis
   - enable: required
   - host: required
@@ -199,4 +221,3 @@ Hello String
   - channel: the default is None, scribe and publish
   - db: by default is 0
   - password: by default is None
-- 

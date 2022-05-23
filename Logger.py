@@ -20,7 +20,7 @@ class Logger:
 	# index of output
 	id      = 0
 
-	def __init__(self, path: str = 'log', filename: str = 'access', extension: str = '.log', enableLog: bool = True, enableConsole: bool = True, line: bool = True, color: bool = True):
+	def __init__(self, path: str = 'log', filename: str = 'access', extension: str = 'log', enableLog: bool = True, enableConsole: bool = True, line: bool = True, charInLine: int= 55, lineCharStart: str = '>', lineCharEnd: str = '<', color: bool = True):
 		"""
 
 		:param path:
@@ -29,6 +29,9 @@ class Logger:
 		:param enableLog:
 		:param enableConsole:
 		:param line:
+		:param charInLine:
+		:param lineCharStart:
+		:param lineCharEnd:
 		:param color:
 		"""
 		# datetime format
@@ -40,6 +43,8 @@ class Logger:
 		# set color
 		self.__color            	= color
 		self.__line             	= line
+		self.__lineCharStart        = f'{lineCharStart}' * charInLine
+		self.__lineCharEnd          = f'{lineCharEnd}' * charInLine
 		# config
 		self.__enableConsole    	= enableConsole
 		self.__enableLog        	= enableLog
@@ -52,7 +57,7 @@ class Logger:
 		self.__enableRedisTrack		= False
 		self.__enableRedisWarning	= False
 		#
-		self.__extension        	= extension
+		self.__extension        	= f'.{extension}'
 		# path + /
 		self.__path            		= path
 		# compute
@@ -102,19 +107,15 @@ class Logger:
 		:param color:
 		:return:
 		"""
-		lineStart   = ''
-		lineEnd     = ''
 		cBody       = f'[{typeName}] '
 		cFoot       = ''
 		cHead       = ''
 
 		# add line to content
 		if bool(self.__line):
-			lineStart   = '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
-			lineEnd     = '<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<'
 			# update
-			cHead       = lineStart
-			cFoot       = lineEnd
+			cHead       = self.__lineCharStart
+			cFoot       = self.__lineCharEnd
 
 		# add color, style
 		if bool(self.__color):
@@ -127,7 +128,6 @@ class Logger:
 			cBody       = f'{cBody}{title}'
 
 		# final content
-		# f"{cBody}{self.__getStr(content)} \n{datetime.now().strftime(self.__dateTimeFormat)}" \
 		return f'\n{cHead}\n{cBody}{self.__getStr(content)} \n{cFoot}\n\n' if bool(self.__line) else f'\n{cBody}\n'
 
 	def __getContentFile(self, fileName: str) -> str:
@@ -153,18 +153,19 @@ class Logger:
 		except Exception:
 			return ''
 
-	def __getContentHead(self, logId: int) -> str:
+	def __getContentHead(self, logId: int, idLabel: str= '') -> str:
 		"""
 
 		:param logId:
+		:param idLabel:
 		:return:
 		"""
 		# final data
 		if self.__keySeries:
-			return f'{self.__datetime} <id: {logId}> {self.__keySeries}\n'
+			return f'{self.__datetime} <{idLabel}{logId}> {self.__keySeries}\n'
 
 		else:
-			return f'{self.__datetime} <id: {logId}>\n'
+			return f'{self.__datetime} <{idLabel}{logId}>\n'
 
 	def __getStr(self, content: Any) -> str:
 		"""
@@ -258,7 +259,7 @@ class Logger:
 		if Logger.id not in Logger.hide:
 			# update content
 			contentBody = self.__getContentBody(typeName= typeName.upper(), title= title, content= self.__getStr(content= content), color= color)
-			contentHead = self.__getContentHead(logId= Logger.id)
+			contentHead = self.__getContentHead(logId= Logger.id, idLabel= 'id: ')
 
 			# enable file log
 			if bool(self.__enableLog):
