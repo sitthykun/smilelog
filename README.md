@@ -86,14 +86,14 @@ Let's Look at its configure would explain more:
 
 ```
 log	= Logger(
-           path: 				str	= 'log'
+           path:                str	= 'log'
            , filename: 			str = 'access'
            , extension: 		str = 'log'  
             , enableLog: 		bool= True
-            , enableConsole: 	bool= True
+            , enableConsole:    bool= True
             , line: 			bool= True
             , charInLine: 		int	= 55
-            , lineCharStart: 	str = '>'
+            , lineCharStart:    str = '>'
             , lineCharEnd: 		str = '<',
             , color: 			bool= True
 	)
@@ -204,6 +204,13 @@ _>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\
 Hello String
 
 ## Pub/Sub
+#### initializes redis requirement
+- setRedis
+  - host: required
+  - port: required
+  - channel: the default is None, scribe and publish
+  - db: by default is 0
+  - password: by default is None
 ### enable Redis Engine
 - enableRedis: bool
 #### enable any functional alert
@@ -213,11 +220,3 @@ Hello String
 - enableTrack: bool
 - enableSuccess: bool
 - enableWarning: bool
-#### initializes redis requirement
-- setRedis
-  - enable: required
-  - host: required
-  - port: required
-  - channel: the default is None, scribe and publish
-  - db: by default is 0
-  - password: by default is None
