@@ -1,6 +1,6 @@
 # SmileLog
 ![smilelog](https://user-images.githubusercontent.com/227092/76993446-6e44ff00-697f-11ea-9aed-970b8fa0e126.png)
-**SmileLog 4.0.0** is a brilliant version which work with redis pubsub.\
+**SmileLog 4.0.4** is a brilliant version which work with redis pubsub.\
 What 's new.
 - Log to a static file
 - Backup file everyday

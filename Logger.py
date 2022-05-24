@@ -1,6 +1,6 @@
 """
 Author: masakokh
-Version: 4.0.0
+Version: 4.0.4
 """
 import datetime
 import os
@@ -71,7 +71,6 @@ class Logger:
 		# pub/sub
 		# self.__fcm				= FCMLib()
 		self.__redis				= RedisLib()
-		# load
 
 	def __createNewBackupFile(self) -> None:
 		"""
@@ -127,8 +126,10 @@ class Logger:
 		else:
 			cBody       = f'{cBody}{title}'
 
+		cBody       = f'{cBody}\n{self.__getStr(content)}'
+
 		# final content
-		return f'\n{cHead}\n{cBody}{self.__getStr(content)} \n{cFoot}\n\n' if bool(self.__line) else f'\n{cBody}\n'
+		return f'{cHead}\n{cBody} \n{cFoot}' if bool(self.__line) else f'{cBody}'
 
 	def __getContentFile(self, fileName: str) -> str:
 		"""
@@ -162,10 +163,10 @@ class Logger:
 		"""
 		# final data
 		if self.__keySeries:
-			return f'{self.__datetime} <{idLabel}{logId}> {self.__keySeries}\n'
+			return f'{self.__datetime} <{idLabel}{logId}> {self.__keySeries}'
 
 		else:
-			return f'{self.__datetime} <{idLabel}{logId}>\n'
+			return f'{self.__datetime} <{idLabel}{logId}>'
 
 	def __getStr(self, content: Any) -> str:
 		"""
@@ -264,12 +265,12 @@ class Logger:
 			# enable file log
 			if bool(self.__enableLog):
 				# write to file
-				self.__writeFile(content= f'{contentHead}\n{contentBody}')
+				self.__writeFile(content= f'{contentHead}\n{contentBody}\n\n')
 
 				# verify first
 				if self.__keySession:
 					# output content to specific file via session's
-					self.__writeSessionFile(content= f'{contentHead}\n{contentBody}')
+					self.__writeSessionFile(content= f'{contentHead}\n{contentBody}\n\n')
 
 			# enable console
 			if bool(self.__enableConsole):
