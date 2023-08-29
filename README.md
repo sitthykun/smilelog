@@ -104,6 +104,8 @@ log	= Logger(
             , lineCharStart:    str = '>'
             , lineCharEnd: 		str = '<',
             , color: 			bool= True
+            , autoClean:        bool= False
+            , maxMb:            int=100
 	)
 ```
 - **path**: is a directory
