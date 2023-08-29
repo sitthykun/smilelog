@@ -1,6 +1,7 @@
 """
 Author: masakokh
-Version: 4.0.4
+Version: 4.1.0
+Note: library
 """
 import datetime
 import os
@@ -20,7 +21,7 @@ class Logger:
 	# index of output
 	id      = 0
 
-	def __init__(self, path: str = 'log', filename: str = 'access', extension: str = 'log', enableLog: bool = True, enableConsole: bool = True, line: bool = True, charInLine: int= 55, lineCharStart: str = '>', lineCharEnd: str = '<', color: bool = True):
+	def __init__(self, path: str = 'log', filename: str = 'access', extension: str = 'log', enableLog: bool = True, enableConsole: bool = True, line: bool = True, charInLine: int= 55, lineCharStart: str = '>', lineCharEnd: str = '<', color: bool = True, autoClean: bool= False, maxMb: int=100):
 		"""
 
 		:param path:
@@ -33,14 +34,19 @@ class Logger:
 		:param lineCharStart:
 		:param lineCharEnd:
 		:param color:
+		:param autoClean:
+		:param maxMb:
 		"""
-		# datetime format
-		# ex: 2020-05-18
+		# private
+		## auto clean file, self-clean
+		self.__autoClean            = autoClean
+		## datetime format
+		## ex: 2020-05-18
 		self.__formatFileName   	= '%Y-%m-%d'
-		# full datetime format
-		# ex: 2022-05-12 21:40:20.345
+		## full datetime format
+		### ex: 2022-05-12 21:40:20.345
 		self.__dateTimeFormat   	= f'{self.__formatFileName} %H:%M:%S'
-		# set color
+		## set color
 		self.__color            	= color
 		self.__line             	= line
 		self.__lineCharStart        = f'{lineCharStart}' * charInLine
@@ -56,11 +62,14 @@ class Logger:
 		self.__enableRedisSuccess	= False
 		self.__enableRedisTrack		= False
 		self.__enableRedisWarning	= False
-		#
+		##
 		self.__extension        	= f'.{extension}'
-		# path + /
+		## path + /
 		self.__path            		= path
-		# compute
+		## by default size of the each 100 mb, if greater than it will reset itself to 0mb
+		## to continue the new line in the file log
+		self.__sizeMaxMb            = maxMb
+		## compute
 		self.__filename         	= os.path.join(self.__path, f'{filename}{self.__extension}')
 		# static datetime
 		self.__datetime         	= datetime.now().strftime(self.__dateTimeFormat)
@@ -285,9 +294,16 @@ class Logger:
 		:return:
 		"""
 		try:
-			# open log file, if not exist will create
-			with open(self.__filename, 'a+', encoding= 'utf-8') as f:
-				f.write(content)
+			# covert Mb to byte
+			if self.__autoClean and os.stat(self.__filename).st_size > (self.__sizeMaxMb * 1024 * 1024):
+				# override file
+				with open(self.__filename, 'w') as fo:
+					fo.write(content)
+
+			else:
+				# open log file, if not exist will create
+				with open(self.__filename, 'a+', encoding= 'utf-8') as fo:
+					fo.write(content)
 
 		except FileNotFoundError as e:
 			print(f'Logger.__writeFile output file FileNotFoundError: open file {e.errno} {e.strerror}({self.__filename}), {str(e)}')

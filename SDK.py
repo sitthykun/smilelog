@@ -1,7 +1,7 @@
 """
 Author: masakokh
-Note: SDK
 Version: 1.0.0
+Note: SDK
 """
 # internal
 

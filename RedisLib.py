@@ -1,7 +1,7 @@
 """
 Author: masakokh
-Note: redis
 Version: 1.0.1
+Note: redis
 """
 #
 import redis
