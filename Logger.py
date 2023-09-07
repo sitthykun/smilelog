@@ -66,7 +66,7 @@ class Logger:
 		self.__extension        	= f'.{extension}'
 		## path + /
 		self.__path            		= path
-		## by default size of the each 100 mb, if greater than it will reset itself to 0mb
+		## by default size of each file is 100 mb, if greater than it will reset itself to 0mb
 		## to continue the new line in the file log
 		self.__sizeMaxMb            = maxMb
 		## compute
