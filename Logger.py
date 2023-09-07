@@ -21,7 +21,7 @@ class Logger:
 	# index of output
 	id      = 0
 
-	def __init__(self, path: str = 'log', filename: str = 'access', extension: str = 'log', enableLog: bool = True, enableConsole: bool = True, line: bool = True, charInLine: int= 55, lineCharStart: str = '>', lineCharEnd: str = '<', color: bool = True, autoClean: bool= False, maxMb: int=100):
+	def __init__(self, path: str= 'log', filename: str= 'access', extension: str= 'log', enableLog: bool= True, enableConsole: bool= True, line: bool= True, charInLine: int= 55, lineCharStart: str= '>', lineCharEnd: str= '<', color: bool = True, autoClean: bool= False, maxMb: int= 100):
 		"""
 
 		:param path:
