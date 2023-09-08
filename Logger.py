@@ -41,10 +41,10 @@ class Logger:
 		self.__autoClean            = autoClean
 		## datetime format
 		## ex: 2020-05-18
-		self.__formatFileName   	= '%Y-%m-%d'
+		self.__dateFormat   	    = '%Y-%m-%d'
 		## full datetime format
 		### ex: 2022-05-12 21:40:20.345
-		self.__dateTimeFormat   	= f'{self.__formatFileName} %H:%M:%S'
+		self.__dateTimeFormat   	= f'{self.__dateFormat} %H:%M:%S'
 		## set color
 		self.__color            	= color
 		self.__line             	= line
@@ -103,7 +103,7 @@ class Logger:
 		:return:
 		"""
 		# generate a filename
-		return os.path.join(self.__path, f'{(datetime.now() - timedelta(1)).strftime(self.__formatFileName)}{self.__extension}')
+		return os.path.join(self.__path, f'{(datetime.now() - timedelta(1)).strftime(self.__dateFormat)}{self.__extension}')
 
 	def __getContentBody(self, typeName: str, title: str, content: Any, color: str) -> str:
 		"""
