@@ -3,7 +3,6 @@ Author: masakokh
 Version: 4.1.0
 Note: library
 """
-import datetime
 import os
 from datetime import datetime, timedelta
 from typing import Any
