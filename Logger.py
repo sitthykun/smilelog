@@ -1,6 +1,6 @@
 """
 Author: masakokh
-Version: 4.1.0
+Version: 4.1.2
 Note: library
 """
 import os
