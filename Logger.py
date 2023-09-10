@@ -285,7 +285,7 @@ class Logger:
 				# console
 				print(f'{contentHead}\n{contentBody}')
 
-	def __writeFile(self, content: str) -> None:
+	def __writeFile(self, content: Any) -> None:
 		"""
 
 		:note: final written file

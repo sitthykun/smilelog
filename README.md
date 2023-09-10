@@ -151,7 +151,7 @@ enableConsole= True
 
 ### Series
 Just a series name of output
-- **setKeySeries**: date
+- **setKeySeries**: data
 ```
 # set value
 log.setKeySeries('Insert Data')
