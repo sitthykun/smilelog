@@ -120,8 +120,8 @@ class SDK:
 
 			:return:
 			"""
-			self.__errorMessage		= ''
 			self.__errorCode		= 0
+			self.__errorMessage		= ''
 			self.__isError			= False
 
 		def __setErrorYes(self, message: str, code: int) -> None:

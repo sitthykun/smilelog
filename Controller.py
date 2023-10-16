@@ -6,6 +6,8 @@ Note: Controller
 # built-in
 import glob
 import os
+import pathlib
+from datetime import datetime
 
 
 class Controller:
@@ -26,9 +28,8 @@ class Controller:
 		:return:
 		"""
 		#
-		if path:
+		if path and os.path.exists(path):
 			self.__path = path
-
 		#
 		self.__path = os.path.join(self.__path, '')
 
@@ -65,7 +66,31 @@ class Controller:
 		:param path:
 		:return:
 		"""
-		pass
+		#
+		self.__setPath(path= path)
+
+		# get file list by pattern via glob function
+		fileList    = os.listdir(self.__path)
+		dStart      = datetime.strptime(startDate, '%Y-%m-%d')
+		dEnd        = datetime.strptime(endDate, '%Y-%m-%d')
+
+		# iterate over the list of filepath and remove each file
+		for fileItem in fileList:
+			# remove one by one
+			try:
+				#
+				if os.path.isfile(fileItem):
+					#
+					timestampFile   = pathlib.Path(fileItem)
+					#
+					if datetime.timestamp(dStart) <= timestampFile.stat().st_mtime <= datetime.timestamp(dEnd):
+						os.remove(fileItem)
+
+			except OSError as e:
+				print(f'Controller.deleteByPattern {str(e)}')
+
+			except Exception as e:
+				print(f'Controller.deleteByPattern {str(e)}')
 
 	def deleteByPattern(self, pattern: str, path: str= '') -> None:
 		"""
@@ -84,7 +109,9 @@ class Controller:
 		for fileItem in fileList:
 			# remove one by one
 			try:
-				os.remove(fileItem)
+				#
+				if os.path.isfile(fileItem):
+					os.remove(fileItem)
 
 			except OSError as e:
 				print(f'Controller.deleteByPattern {str(e)}')

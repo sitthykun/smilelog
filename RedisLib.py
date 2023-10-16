@@ -41,7 +41,7 @@ class RedisLib:
 			self.__pubsub.unsubscribe(channel)
 
 		except Exception as e:
-			print(str(e))
+			print('RedisLib.channelDelete Exception', str(e))
 
 	def channelSet(self, channel: str) -> None:
 		"""
@@ -59,7 +59,7 @@ class RedisLib:
 				self.__pubsub.subscribe(self.__channel)
 
 		except Exception as e:
-			print(str(e))
+			print('RedisLib.channelSet Exception', str(e))
 
 	def config(self, host: str, port: int, db: int = 0, password: str = None) -> None:
 		"""
@@ -110,7 +110,7 @@ class RedisLib:
 				self.__pubsub	= self.__redis.pubsub()
 
 		except Exception as e:
-			print(f'{str(e)}')
+			print('RedisLib.config Exception', str(e))
 
 	def itemDelete(self, key: str) -> None:
 		"""
@@ -136,7 +136,7 @@ class RedisLib:
 			)
 
 		except Exception as e:
-			print(str(e))
+			print('RedisLib.itemSet Exception', str(e))
 
 	def messageGet(self, channel: str= None) -> Any:
 		"""
@@ -152,7 +152,7 @@ class RedisLib:
 			self.__pubsub.get_message()
 
 		except Exception as e:
-			print(str(e))
+			print('RedisLib.messageGet Exception', str(e))
 
 	def messagePush(self, title: str, body: str, channel: str = None) -> None:
 		"""
@@ -182,4 +182,4 @@ class RedisLib:
 				)
 
 		except Exception as e:
-			print(str(e))
+			print('RedisLib.messagePush Exception', str(e))

@@ -1,1 +1,2 @@
 redis==5.0.0
+SmileArgs==1.0.1
