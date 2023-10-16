@@ -37,6 +37,7 @@ What will it assist us:
 This feature will cover to a specific tracking.
 9. Group the log with specific key(series key)
 10. Able to set maxSize log
+11. Implemented some command with CLI
 
 It is available on **PyPi** store via https://pypi.org/project/SmileLog/ \
 To Support my work, please donate me via <a class="bmc-button" target="_blank" href="https://www.buymeacoffee.com/sitthykun"><img src="https://cdn.buymeacoffee.com/buttons/bmc-new-btn-logo.svg" alt="Buy me a Pizza"><span style="margin-left:5px;font-size:28px !important;">Buy me a Coffee</span></a>
