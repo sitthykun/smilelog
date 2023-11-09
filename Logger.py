@@ -127,9 +127,9 @@ class Logger:
 		# add color, style
 		if bool(self.__color):
 			# update
-			cHead       = f'{color}{cHead}{self.__StyleModifier.ENDC}'
-			cFoot       = f'{color}{cFoot}{self.__StyleModifier.ENDC}'
-			cBody       = f'{color}{cBody}{self.__StyleModifier.ENDC}{self.__StyleModifier.TEXT_BOLD}{title}{self.__StyleModifier.ENDC}'
+			cHead       = f'{color}{cHead}{self.__StyleModifier.END_C}'
+			cFoot       = f'{color}{cFoot}{self.__StyleModifier.END_C}'
+			cBody       = f'{color}{cBody}{self.__StyleModifier.END_C}{self.__StyleModifier.TEXT_BOLD}{title}{self.__StyleModifier.END_C}'
 
 		else:
 			cBody       = f'{cBody}{title}'
@@ -145,10 +145,10 @@ class Logger:
 		:param fileName:
 		:return:
 		"""
-		try:
-			# init
-			content	= ''
+		# init
+		content = ''
 
+		try:
 			# read file
 			with open(fileName) as f:
 				content = f.read()
@@ -157,10 +157,10 @@ class Logger:
 			return content
 
 		except IOError:
-			return ''
+			return content
 
 		except Exception:
-			return ''
+			return content
 
 	def __getContentHead(self, logId: int, idLabel: str= '') -> str:
 		"""
@@ -578,4 +578,4 @@ class Logger:
 		TEXT_BOLD       = '\033[1m'
 		TEXT_UNDERLINE  = '\033[4m'
 		# End up color
-		ENDC            = '\033[0m'
+		END_C           = '\033[0m'
