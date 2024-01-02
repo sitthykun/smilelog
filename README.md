@@ -7,9 +7,9 @@ It won't do anything unless the value of the 'autoclean' equals 'False'.
 autoclean= True
 maxMb=100
 ```
-Every writing a log, it will check these value.
+Every writing a log, it will check this value.
 
-The features since version 4.x.x:
+The features since version 4.1.x:
 - Log to a static file
 - Backup file everyday
 - Enable series of log session
@@ -23,21 +23,21 @@ The features since version 4.x.x:
 - Improve performance
 - Clean up code
 
-It's going to change the traditional tracing in another way.\
+Traditional tracing will undergo a change in a different way.\
 What will it assist us:
  
-1. Showing the colorized log by following the standard color
-2. Ignoring any track by reading id in the list 
-3. Each statement list down with a big span and symbols
+1. Displaying the colored log by adhering to the standard colors.
+2. Identifying a track by reading its ID in the list.
+3. Each statement lists down with a big span and symbols
 4. Using a static file to output the content that will be easier
 5. Disable the entire tracing in a second
 6. 5 methods for 5 outputs
 7. Backup file if log start a new date
-8. Separating a new file with a new file name
+8. Separating a new file with a new file name.
 This feature will cover to a specific tracking.
 9. Group the log with specific key(series key)
 10. Able to set maxSize log
-11. Implemented some command with CLI
+11. Implementing some commands with CLI
 
 It is available on **PyPi** store via https://pypi.org/project/SmileLog/ \
 To Support my work, please donate me via <a class="bmc-button" target="_blank" href="https://www.buymeacoffee.com/sitthykun"><img src="https://cdn.buymeacoffee.com/buttons/bmc-new-btn-logo.svg" alt="Buy me a Pizza"><span style="margin-left:5px;font-size:28px !important;">Buy me a Coffee</span></a>
@@ -47,7 +47,7 @@ To Support my work, please donate me via <a class="bmc-button" target="_blank" h
 # pip3 install SmileLog
 ```
 
-### 5 Methods
+### 6 Methods
 Use in the different situation, and show up in different color
 1. error: error(title, content, id= None, channel= None)
 2. fail: fail(title, content, id= None, channel= None)
@@ -133,7 +133,7 @@ color= True
 or
 color= False
 ```
-- **enableLog**: allow an object to create the file.
+- **enableLog**: To allows an object to create the file.
 	- True: To create a file and write content into log file
 	- False: To disable the logging
 ```
@@ -142,7 +142,7 @@ color= False
 enableLog= True
 ```
 
-- **enableConsole**: to bring something on the screen of log.
+- **enableConsole**: To shows something on the screen of log.
 	- True: To print out on terminal
 	- False: No action
 ```
@@ -175,7 +175,7 @@ log.disableIds([1,2,3,7,8,9])
 ```
 
 ### Separate a session file 
-Here is the method to separate normal log file to a specific.
+Here is the method to separate normal log file to a specific session.
 Follow the setting: 
 - **setKeySession**: must be a string and maximum length 32
 
