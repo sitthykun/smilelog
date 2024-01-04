@@ -9,7 +9,6 @@ from typing import Any
 # external
 from smileargs.SmileArgs import SmileArgs
 # internal
-# import .Controller
 from Controller import Controller
 
 def main(argv) -> None:
