@@ -1,6 +1,6 @@
 # SmileLog
 ![smilelog](https://user-images.githubusercontent.com/227092/76993446-6e44ff00-697f-11ea-9aed-970b8fa0e126.png)
-**SmileLog 4.1.2**\
+**SmileLog 4.1.4**\
 Appending a silent feature which auto-remove itself the current content file if over a limit that given by a parameter 'maxMb'.
 It won't do anything unless the value of the 'autoclean' equals 'False'.
 ```

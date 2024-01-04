@@ -3,12 +3,13 @@ Author: masakokh
 Version: 4.1.3
 Note: library
 """
+# built-in
 import os
 from datetime import datetime, timedelta
 from typing import Any
 # internal
-# from FCMLib import FCMLib
-from RedisLib import RedisLib
+from smilelog.FCMLib import FCMLib
+from smilelog.RedisLib import RedisLib
 
 
 class Logger:
