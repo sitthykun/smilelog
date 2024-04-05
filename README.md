@@ -220,7 +220,7 @@ Hello String
 - setRedis
   - host: required
   - port: required
-  - channel: the default is None, scribe and publish
+  - channel: the default is None, subscribe and publish
   - db: by default is 0
   - password: by default is None
 ### enable Redis Engine
