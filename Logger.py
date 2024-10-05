@@ -73,10 +73,6 @@ class Logger:
 		self.__filename         	= os.path.join(self.__path, f'{filename}{self.__extension}')
 		# static datetime
 		self.__datetime         	= datetime.now().strftime(self.__dateTimeFormat)
-		# series
-		self.__keySeries        	= ''
-		# session as uuid or md5
-		self.__keySession       	= ''
 		# pub/sub
 		# self.__fcm				= FCMLib()
 		self.__redis				= RedisLib()
@@ -163,19 +159,22 @@ class Logger:
 		except Exception:
 			return content
 
-	def __getContentHead(self, logId: int, idLabel: str= '') -> str:
+	def __getContentHead(self, logId: int, idLabel: str= '', keySeries: str= '', keySession: str = '') -> str:
 		"""
 
 		:param logId:
 		:param idLabel:
 		:return:
 		"""
+		if keySeries and keySeries != '':
+			keySeries = f' <{keySeries}> '
+
 		# final data
-		if self.__keySeries:
-			return f'{self.__datetime} <{idLabel}{logId}> {self.__keySeries}'
+		if keySession:
+			return f'{self.__datetime}{keySeries}<{idLabel}{logId}> {keySession}'
 
 		else:
-			return f'{self.__datetime} <{idLabel}{logId}>'
+			return f'{self.__datetime}<{keySeries}><{idLabel}{logId}>'
 
 	def __getStr(self, content: Any) -> str:
 		"""
@@ -217,13 +216,14 @@ class Logger:
 	# 	"""
 	# 	pass
 
-	def __pushRedis(self, isEnabled: bool, title: str, content: str, channel: str = None) -> None:
+	def __pushRedis(self, isEnabled: bool, title: str, content: str, channel: str = None, keySeries: str = None) -> None:
 		"""
 
 		:param isEnabled:
 		:param title:
 		:param content:
 		:param channel:
+		:param keySeries:
 		:return:
 		"""
 		if self.__isEnabledRedis(enabledLevel= isEnabled):
@@ -232,6 +232,7 @@ class Logger:
 				title		= title
 				, body		= content
 				, channel	= channel
+				, keySeries = keySeries
 			)
 
 	def __setNewId(self, id: int) -> None:
@@ -243,14 +244,31 @@ class Logger:
 		if id > Logger.id:
 			Logger.id   = id
 
-	def __write(self, typeName: str = '', title: str = '', color: str = '', content: Any = None, logId: int = None) -> None:
+	def __write(self, typeName: str = '', title: str = '', color: str = '', content: Any = None, logId: int = None, keySeries: str = None, keySession: str = None) -> None:
 		"""
 
 		:param typeName:
 		:param title:
-		:param content:
 		:param color:
+		:param content:
 		:param logId:
+		:param keySeries:
+		:param keySession:
+		:return:
+		"""
+		#
+		self.__writeFinal(typeName, title, color, content, logId, keySeries, keySession)
+
+	def __writeFinal(self, typeName: str = '', title: str = '', color: str = '', content: Any = None, logId: int = None, keySeries: str= None, keySession: str = None) -> None:
+		"""
+
+		:param typeName:
+		:param title:
+		:param color:
+		:param content:
+		:param logId:
+		:param keySeries:
+		:param keySession:
 		:return:
 		"""
 		# create file
@@ -269,7 +287,7 @@ class Logger:
 		if Logger.id not in Logger.hide:
 			# update content
 			contentBody = self.__getContentBody(typeName= typeName.upper(), title= title, content= self.__getStr(content= content), color= color)
-			contentHead = self.__getContentHead(logId= Logger.id, idLabel= 'id: ')
+			contentHead = self.__getContentHead(logId= Logger.id, idLabel= 'id: ', keySeries= keySeries)
 
 			# enable file log
 			if bool(self.__enableLog):
@@ -277,9 +295,9 @@ class Logger:
 				self.__writeFile(content= f'{contentHead}\n{contentBody}\n\n')
 
 				# verify first
-				if self.__keySession:
+				if keySession:
 					# output content to specific file via session's
-					self.__writeSessionFile(content= f'{contentHead}\n{contentBody}\n\n')
+					self.__writeSessionFile(sessionKey= keySession, content= f'{contentHead}\n{contentBody}\n\n')
 
 			# enable console
 			if bool(self.__enableConsole):
@@ -314,7 +332,7 @@ class Logger:
 		except Exception as e:
 			print(f'Logger.__writeFile output file Exception: open file({self.__filename}), {str(e)}')
 
-	def __writeSessionFile(self, content: Any) -> None:
+	def __writeSessionFile(self, sessionKey: str, content: Any) -> None:
 		"""
 
 		:param content:
@@ -322,17 +340,17 @@ class Logger:
 		"""
 		try:
 			# open log file, if not exist will create
-			with open(f'{self.__path}{self.__keySession}{self.__extension}', 'a+', encoding= 'utf-8') as fs:
+			with open(f'{self.__path}{sessionKey}{self.__extension}', 'a+', encoding= 'utf-8') as fs:
 				fs.write(content)
 
 		except FileNotFoundError as e:
-			print(f'Logger.__writeSessionFile output file FileNotFoundError: open file {e.errno} {e.strerror}({self.__path}{self.__keySession}{self.__extension}), {str(e)}')
+			print(f'Logger.__writeSessionFile output file FileNotFoundError: open file {e.errno} {e.strerror}({self.__path}{sessionKey}{self.__extension}), {str(e)}')
 
 		except IOError as e:
-			print(f'Logger.__writeSessionFile output file IOError: open file {e.errno} {e.strerror}({self.__path}{self.__keySession}{self.__extension}), {str(e)}')
+			print(f'Logger.__writeSessionFile output file IOError: open file {e.errno} {e.strerror}({self.__path}{sessionKey}{self.__extension}), {str(e)}')
 
 		except Exception as e:
-			print(f'Logger.__writeSessionFile output file Exception: open file ({self.__path}{self.__keySession}{self.__extension}), {str(e)}')
+			print(f'Logger.__writeSessionFile output file Exception: open file ({self.__path}{sessionKey}{self.__extension}), {str(e)}')
 
 	def disableIds(self, numbers: list = None) -> None:
 		"""
@@ -343,13 +361,14 @@ class Logger:
 		if numbers:
 			Logger.hide     = numbers
 
-	def error(self, title: str = '', content: Any = None, id: int = None, channel: str = None) -> None:
+	def error(self, title: str = '', content: Any = None, id: int = None, channel: str = None, keySeries: str = None, keySession: str= None) -> None:
 		"""
 
 		:param title:
 		:param content:
 		:param id:
 		:param channel:
+		:param keySeries:
 		:return:
 		"""
 		self.__write(
@@ -358,6 +377,8 @@ class Logger:
 			, content   = content
 			, color     = self.__StyleModifier.RED
 			, logId     = id
+			, keySeries = keySeries
+			, keySession= keySession
 		)
 
 		#
@@ -366,15 +387,17 @@ class Logger:
 			, title		= title
 			, content	= content
 			, channel	= channel
+			, keySeries = keySeries
 		)
 
-	def fail(self, title: str = '', content: Any = None, id: int = None, channel: str = None) -> None:
+	def fail(self, title: str = '', content: Any = None, id: int = None, channel: str = None, keySeries: str = None, keySession: str= None) -> None:
 		"""
 
 		:param title:
 		:param content:
 		:param id:
 		:param channel:
+		:param keySeries:
 		:return:
 		"""
 		self.__write(
@@ -383,6 +406,8 @@ class Logger:
 			, content   = content
 			, color     = self.__StyleModifier.MAGENTA
 			, logId     = id
+			, keySeries = keySeries
+			, keySession= keySession
 		)
 
 		#
@@ -391,15 +416,17 @@ class Logger:
 			, title		= title
 			, content	= content
 			, channel	= channel
+			, keySeries = keySeries
 		)
 
-	def info(self, title: str = '', content: Any = None, id: int = None, channel: str = None) -> None:
+	def info(self, title: str = '', content: Any = None, id: int = None, channel: str = None, keySeries: str = None, keySession: str= None) -> None:
 		"""
 
 		:param title:
 		:param content:
 		:param id:
 		:param channel:
+		:param keySeries:
 		:return:
 		"""
 
@@ -409,6 +436,8 @@ class Logger:
 			, content   = content
 			, color     = self.__StyleModifier.BLUE
 			, logId     = id
+			, keySeries = keySeries
+			, keySession= keySession
 		)
 
 		#
@@ -417,6 +446,7 @@ class Logger:
 			, title		= title
 			, content	= content
 			, channel	= channel
+			, keySeries = keySeries
 		)
 
 	# def setFCM(self, config: dict) -> None:
@@ -426,30 +456,6 @@ class Logger:
 	# 	:return:
 	# 	"""
 	# 	self.__fcm.setConfig(config)
-
-	def setKeySeries(self, series: str = None) -> None:
-		"""
-
-		:param series:
-		:return:
-		"""
-		self.__keySeries    = series
-
-	def setKeySession(self, sessionKey: str = None) -> None:
-		"""
-
-		:note: set session filename
-		:param sessionKey:
-		:return:
-		"""
-		if sessionKey and len(sessionKey) > 32:
-			# start 0 to 31st of string
-			self.__keySession       = sessionKey[0:31]
-
-		else:
-			# accept even empty or none
-			# empty or none won't able this feature
-			self.__keySession       = sessionKey
 
 	def setRedis(self, enable: bool, host: str, port: int, db: int = 0, password: str = None, enableError: bool = False, enableFail: bool = False, enableInfo: bool = False, enableTrack: bool = False, enableSuccess: bool = False, enableWarning: bool = False, channel: str = None) -> None:
 		"""
@@ -490,7 +496,7 @@ class Logger:
 		# set channel name
 		self.__redis.channelSet(channel= channel)
 
-	def success(self, title: str = '', content: Any = None, id: int = None, channel: str = None) -> None:
+	def success(self, title: str = '', content: Any = None, id: int = None, channel: str = None, keySeries: str = None, keySession: str= None) -> None:
 		"""
 
 		:param title:
@@ -505,6 +511,8 @@ class Logger:
 			, content   = content
 			, color     = self.__StyleModifier.GREEN
 			, logId     = id
+			, keySeries = keySeries
+			, keySession= keySession
 		)
 
 		#
@@ -513,15 +521,17 @@ class Logger:
 			, title		= title
 			, content	= content
 			, channel	= channel
+			, keySeries = keySeries
 		)
 
-	def track(self, title: str = '', content: Any = None, id: int = None, channel: str = None) -> None:
+	def track(self, title: str = '', content: Any = None, id: int = None, channel: str = None, keySeries: str = None, keySession: str= None) -> None:
 		"""
 
 		:param title:
 		:param content:
 		:param id:
 		:param channel:
+		:param keySeries:
 		:return:
 		"""
 		self.__write(
@@ -529,6 +539,8 @@ class Logger:
 			, title     = title
 			, content   = content
 			, logId     = id
+			, keySeries = keySeries
+			, keySession= keySession
 		)
 
 		#
@@ -537,9 +549,10 @@ class Logger:
 			, title		= title
 			, content	= content
 			, channel	= channel
+			, keySeries = keySeries
 		)
 
-	def warning(self, title: str = '', content: Any = None, id: int = None, channel: str = None) -> None:
+	def warning(self, title: str = '', content: Any = None, id: int = None, channel: str = None, keySeries: str = None, keySession: str= None) -> None:
 		"""
 
 		:param title:
@@ -554,6 +567,8 @@ class Logger:
 			, content   = content
 			, color     = self.__StyleModifier.YELLOW
 			, logId     = id
+			, keySeries = keySeries
+			, keySession= keySession
 		)
 
 		#
@@ -562,6 +577,7 @@ class Logger:
 			, title		= title
 			, content	= content
 			, channel	= channel
+			, keySeries = keySeries
 		)
 
 	class __StyleModifier:

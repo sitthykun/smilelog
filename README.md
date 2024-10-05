@@ -1,12 +1,18 @@
 # SmileLog
 ![smilelog](https://user-images.githubusercontent.com/227092/76993446-6e44ff00-697f-11ea-9aed-970b8fa0e126.png)
-**SmileLog 4.1.4**\
-Appending a silent feature which auto-remove itself the current content file if over a limit that given by a parameter 'maxMb'.
-It won't do anything unless the value of the 'autoclean' equals 'False'.
+**SmileLog 4.2.0**\
+Change logical business of the keySession by adding to those methods rather than setKeySession to make it dynamic on the run time.
+Ex:
+Before
 ```
-autoclean= True
-maxMb=100
+warning(self, title: str = '', content: Any = None, id: int = None, channel: str = None, keySeries: str = None)
 ```
+
+After
+```
+warning(self, title: str = '', content: Any = None, id: int = None, channel: str = None, keySeries: str = None, keySession: str= None)
+```
+
 Every writing a log, it will check this value.
 
 The features since version 4.1.x:
@@ -22,6 +28,7 @@ The features since version 4.1.x:
 - Fix bugs
 - Improve performance
 - Clean up code
+- Auto clean up teh file when it set by maxMb
 
 Traditional tracing will undergo a change in a different way.\
 What will it assist us:
@@ -38,6 +45,7 @@ This feature will cover to a specific tracking.
 9. Group the log with specific key(series key)
 10. Able to set maxSize log
 11. Implementing some commands with CLI
+12. Change business log for KeySession
 
 It is available on **PyPi** store via https://pypi.org/project/SmileLog/ \
 To Support my work, please donate me via <a class="bmc-button" target="_blank" href="https://www.buymeacoffee.com/sitthykun"><img src="https://cdn.buymeacoffee.com/buttons/bmc-new-btn-logo.svg" alt="Buy me a Pizza"><span style="margin-left:5px;font-size:28px !important;">Buy me a Coffee</span></a>
@@ -49,12 +57,12 @@ To Support my work, please donate me via <a class="bmc-button" target="_blank" h
 
 ### 6 Methods
 Use in the different situation, and show up in different color
-1. error: error(title, content, id= None, channel= None)
-2. fail: fail(title, content, id= None, channel= None)
-3. information: info(title, content, id= None, channel= None)
-4. success: success(title, content, id= None, channel= None)
-5. track: track(title, content, id= None, channel= None)
-6. warning: warning(title, content, id= None, channel= None)
+1. error: error(title: str = '', content: Any = None, id: int = None, channel: str = None, keySeries: str = None, keySession: str= None)
+2. fail: fail(title: str = '', content: Any = None, id: int = None, channel: str = None, keySeries: str = None, keySession: str= None)
+3. information: info(title: str = '', content: Any = None, id: int = None, channel: str = None, keySeries: str = None, keySession: str= None)
+4. success: success(title: str = '', content: Any = None, id: int = None, channel: str = None, keySeries: str = None, keySession: str= None)
+5. track: track(title: str = '', content: Any = None, id: int = None, channel: str = None, keySeries: str = None, keySession: str= None)
+6. warning: warning(title: str = '', content: Any = None, id: int = None, channel: str = None, keySeries: str = None, keySession: str= None)
 ```
 - title is a string
 - content can be a string or dict
