@@ -1,6 +1,6 @@
 """
 Author: masakokh
-Version: 4.1.3
+Version: 4.4.0
 Note: library
 """
 # built-in
@@ -8,8 +8,8 @@ import os
 from datetime import datetime, timedelta
 from typing import Any
 # internal
-from smilelog.FCMLib import FCMLib
-from smilelog.RedisLib import RedisLib
+# from smilelog.FCMLib import FCMLib
+from RedisLib import RedisLib
 
 
 class Logger:
@@ -76,6 +76,13 @@ class Logger:
 		# pub/sub
 		# self.__fcm				= FCMLib()
 		self.__redis				= RedisLib()
+		#
+		self.__titleError           = 'ERROR'
+		self.__titleFail            = 'FAIL'
+		self.__titleInfo            = 'INFO'
+		self.__titleSuccess         = 'SUCCESS'
+		self.__titleTrack           = 'TRACK'
+		self.__titleWarn            = 'WARN'
 
 	def __createNewBackupFile(self) -> None:
 		"""
@@ -101,6 +108,25 @@ class Logger:
 		"""
 		# generate a filename
 		return os.path.join(self.__path, f'{(datetime.now() - timedelta(1)).strftime(self.__dateFormat)}{self.__extension}')
+
+	def __checkRedisByType(self, typeName: str) -> bool:
+		"""
+
+		:param typeName:
+		:return:
+		"""
+		if typeName == self.__titleError:
+			return self.__redis.enableError
+		elif typeName == self.__titleFail:
+			return self.__redis.enableFail
+		elif typeName == self.__titleInfo:
+			return self.__redis.enableInfo
+		elif typeName == self.__titleTrack:
+			return self.__redis.enableTrack
+		elif typeName == self.__titleSuccess:
+			return self.__redis.enableSuccess
+		elif typeName == self.__titleWarn:
+			return self.__redis.enableWarn
 
 	def __getContentBody(self, typeName: str, title: str, content: Any, color: str) -> str:
 		"""
@@ -232,7 +258,7 @@ class Logger:
 				title		= title
 				, body		= content
 				, channel	= channel
-				, keySeries = keySeries
+				# , keySeries = keySeries
 			)
 
 	def __setNewId(self, id: int) -> None:
@@ -244,7 +270,7 @@ class Logger:
 		if id > Logger.id:
 			Logger.id   = id
 
-	def __write(self, typeName: str = '', title: str = '', color: str = '', content: Any = None, logId: int = None, keySeries: str = None, keySession: str = None) -> None:
+	def __write(self, typeName: str = '', title: str = '', color: str = '', content: Any = None, logId: int = None, keySeries: str = None, keySession: str = None, channel: str = None) -> None:
 		"""
 
 		:param typeName:
@@ -258,6 +284,15 @@ class Logger:
 		"""
 		#
 		self.__writeFinal(typeName, title, color, content, logId, keySeries, keySession)
+
+		#
+		self.__pushRedis(
+			isEnabled	= self.__checkRedisByType(typeName= typeName)
+			, title		= title
+			, content	= content
+			, channel	= channel
+			, keySeries = keySeries
+		)
 
 	def __writeFinal(self, typeName: str = '', title: str = '', color: str = '', content: Any = None, logId: int = None, keySeries: str= None, keySession: str = None) -> None:
 		"""
@@ -372,22 +407,14 @@ class Logger:
 		:return:
 		"""
 		self.__write(
-			typeName    = 'ERROR'
+			typeName    = self.__titleError
 			, title     = title
 			, content   = content
 			, color     = self.__StyleModifier.RED
 			, logId     = id
 			, keySeries = keySeries
 			, keySession= keySession
-		)
-
-		#
-		self.__pushRedis(
-			isEnabled	= self.__redis.enableError
-			, title		= title
-			, content	= content
-			, channel	= channel
-			, keySeries = keySeries
+			, channel   = channel
 		)
 
 	def fail(self, title: str = '', content: Any = None, id: int = None, channel: str = None, keySeries: str = None, keySession: str= None) -> None:
@@ -401,22 +428,14 @@ class Logger:
 		:return:
 		"""
 		self.__write(
-			typeName    = 'FAIL'
+			typeName    = self.__titleFail
 			, title     = title
 			, content   = content
 			, color     = self.__StyleModifier.MAGENTA
 			, logId     = id
 			, keySeries = keySeries
 			, keySession= keySession
-		)
-
-		#
-		self.__pushRedis(
-			isEnabled	= self.__redis.enableFail
-			, title		= title
-			, content	= content
-			, channel	= channel
-			, keySeries = keySeries
+			, channel   = channel
 		)
 
 	def info(self, title: str = '', content: Any = None, id: int = None, channel: str = None, keySeries: str = None, keySession: str= None) -> None:
@@ -431,22 +450,14 @@ class Logger:
 		"""
 
 		self.__write(
-			typeName    = 'INFO'
+			typeName    = self.__titleInfo
 			, title     = title
 			, content   = content
 			, color     = self.__StyleModifier.BLUE
 			, logId     = id
 			, keySeries = keySeries
 			, keySession= keySession
-		)
-
-		#
-		self.__pushRedis(
-			isEnabled	= self.__redis.enableInfo
-			, title		= title
-			, content	= content
-			, channel	= channel
-			, keySeries = keySeries
+			, channel   = channel
 		)
 
 	# def setFCM(self, config: dict) -> None:
@@ -506,51 +517,23 @@ class Logger:
 		:return:
 		"""
 		self.__write(
-			typeName    = 'SUCCESS'
+			typeName    = self.__titleSuccess
 			, title     = title
 			, content   = content
 			, color     = self.__StyleModifier.GREEN
 			, logId     = id
 			, keySeries = keySeries
 			, keySession= keySession
+			, channel   = channel
 		)
 
-		#
-		self.__pushRedis(
-			isEnabled	= self.__redis.enableSuccess
-			, title		= title
-			, content	= content
-			, channel	= channel
-			, keySeries = keySeries
-		)
-
-	def track(self, title: str = '', content: Any = None, id: int = None, channel: str = None, keySeries: str = None, keySession: str= None) -> None:
+	def trace(self, content: Any = None) -> None:
 		"""
 
-		:param title:
 		:param content:
-		:param id:
-		:param channel:
-		:param keySeries:
 		:return:
 		"""
-		self.__write(
-			typeName    = 'TRACK'
-			, title     = title
-			, content   = content
-			, logId     = id
-			, keySeries = keySeries
-			, keySession= keySession
-		)
-
-		#
-		self.__pushRedis(
-			isEnabled	= self.__redis.enableTrack
-			, title		= title
-			, content	= content
-			, channel	= channel
-			, keySeries = keySeries
-		)
+		self.__writeFile(content= f'{content}\n')
 
 	def warning(self, title: str = '', content: Any = None, id: int = None, channel: str = None, keySeries: str = None, keySession: str= None) -> None:
 		"""
@@ -562,22 +545,14 @@ class Logger:
 		:return:
 		"""
 		self.__write(
-			typeName    = 'WARNING'
+			typeName    = self.__titleWarn
 			, title     = title
 			, content   = content
 			, color     = self.__StyleModifier.YELLOW
 			, logId     = id
 			, keySeries = keySeries
 			, keySession= keySession
-		)
-
-		#
-		self.__pushRedis(
-			isEnabled	= self.__redis.enableWarning
-			, title		= title
-			, content	= content
-			, channel	= channel
-			, keySeries = keySeries
+			, channel   = channel
 		)
 
 	class __StyleModifier:

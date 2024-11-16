@@ -18,17 +18,17 @@ class RedisLib:
 
 		"""
 		# private
-		self.__channel		= None
-		self.__pool			= None
-		self.__pubsub		= None
-		self.__redis		= None
+		self.__channel: str		    = ''
+		self.__pool			        = None
+		self.__pubsub		        = None
+		self.__redis                 = None
 		# public
-		self.enableError	= False
-		self.enableFail		= False
-		self.enableInfo		= False
-		self.enableTrack	= False
-		self.enableSuccess	= False
-		self.enableWarning	= False
+		self.enableError: bool	    = False
+		self.enableFail: bool		= False
+		self.enableInfo: bool		= False
+		self.enableTrack: bool	    = False
+		self.enableSuccess: bool	= False
+		self.enableWarn: bool       = False
 
 	def channelDelete(self, channel: str) -> None:
 		"""

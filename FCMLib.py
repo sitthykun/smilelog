@@ -22,4 +22,4 @@ class FCMLib:
 		:param config:
 		:return:
 		"""
-		self.__config = config
+		self.__config: dict = config

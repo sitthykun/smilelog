@@ -1,5 +1,37 @@
 # SmileLog
 ![smilelog](https://user-images.githubusercontent.com/227092/76993446-6e44ff00-697f-11ea-9aed-970b8fa0e126.png)
+**SmileLog 4.4.0**\
+- Implement trace(content= 'content') for tracking without title
+- Remove begin() and end() method
+- Remove track() method
+
+Ex:
+```
+trace(content= 'miss mom')
+```
+
+**SmileLog 4.3.0**\
+Implement begin() and end() method. These will keep the content in sequence of text and set only one title as TRACE.
+
+Ex:
+```
+begin()
+
+warning(title= 'Hello Title Warning', content= 'Warning content')
+info(title= 'Hello Info', content= 'Info content')
+error(title= 'Hello Error', content= 'Error content')
+
+end()
+```
+
+Output:
+```
+[TRACE] Hello Title Warning
+Warning content
+Info content
+Error content
+```
+
 **SmileLog 4.2.0**\
 Change logical business of the keySession by adding to those methods rather than setKeySession to make it dynamic on the run time.
 Ex:

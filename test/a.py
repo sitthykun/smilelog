@@ -1,3 +1,9 @@
+import sys
+import os
+
+# Add the parent directory to sys.path
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
 from Logger import Logger
 
 
@@ -24,5 +30,10 @@ logger.track(title='test track', content='content track')
 logger.fail(title='test fail', content='content fail')
 logger.success(title='test success', content='content success')
 logger.error(title='test error', content='content error')
+
+
+logger.begin()
+logger.error()
+logger.end()
 
 
